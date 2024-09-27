@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: lts/*
           cache: yarn
-      - uses: w9jds/setup-firebase@v1
+      - uses: w9jds/setup-firebase@main
         with:
           gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANJODATO_ADD8B }}
       - run: yarn
