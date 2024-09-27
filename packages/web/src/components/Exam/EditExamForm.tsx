@@ -31,7 +31,6 @@ export function EditExamForm({ exam }: Props) {
             data: {
               title: data.get("title") as string,
               description: data.get("description") as string,
-              owner: data.get("email") as string,
               private: data.get("private") === "on",
             },
           }),
