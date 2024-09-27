@@ -112,13 +112,20 @@ export function NewExamForm() {
         </fieldset>
         <footer>
           <fieldset className="grid">
-            <input
+            <button
               type="button"
               className="secondary"
               onClick={(e) => setLocation("/")}
-              value="Cancel"
-            />
-            <input disabled={saving} type="submit" value="Create" />
+            >
+              Cancel
+            </button>
+            <button
+              disabled={saving}
+              aria-busy={saving ? "true" : "false"}
+              type="submit"
+            >
+              Create
+            </button>
           </fieldset>
         </footer>
       </article>

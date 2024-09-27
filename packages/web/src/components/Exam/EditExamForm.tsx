@@ -77,18 +77,20 @@ export function EditExamForm({ exam }: Props) {
         </fieldset>
         <footer>
           <fieldset className="grid">
-            <input
+            <button
               type="button"
               className="secondary"
               onClick={(e) => setLocation(`/${slug}`)}
-              value="Cancel"
-            />
-            <input
+            >
+              Cancel
+            </button>
+            <button
               disabled={saving}
               aria-busy={saving ? "true" : "false"}
               type="submit"
-              value="Save details"
-            />
+            >
+              Save details
+            </button>
           </fieldset>
         </footer>
       </article>
