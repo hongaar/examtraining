@@ -15,7 +15,7 @@ jobs:
           cache: yarn
       - uses: w9jds/setup-firebase@main
         with:
-          gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANJODATO_ADD8B }}
+          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
       - run: yarn
       - run: yarn build
       - run: firebase deploy --only hosting
