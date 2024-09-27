@@ -15,8 +15,8 @@
     "start:functions": "yarn workspace @examtraining/functions run build:watch",
     "start:core": "yarn workspace @examtraining/core run build:watch",
     "start:emulator": "firebase emulators:start --only hosting,functions,firestore",
-    "build": "yarn workspaces foreach --topological --verbose run build",
-    "build:watch": "yarn workspaces foreach --parallel --interlaced run build:watch",
+    "build": "yarn workspaces foreach --all --topological --verbose run build",
+    "build:watch": "yarn workspaces foreach --all --parallel --interlaced run build:watch",
     "format": "prettier --write --ignore-unknown .",
     "format:check": "prettier --check --ignore-unknown .",
     "postinstall": "husky install"
