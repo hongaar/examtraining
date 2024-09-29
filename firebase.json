@@ -27,6 +27,7 @@
     ]
   },
   "emulators": {
+    "singleProjectMode": true,
     "auth": {
       "port": 9099
     },
@@ -42,12 +43,17 @@
     "hosting": {
       "port": 5000
     },
-    "singleProjectMode": true
-  },
-  "storage": {
-    "rules": "storage.rules"
+    "pubsub": {
+      "port": 8085
+    },
+    "eventarc": {
+      "port": 9299
+    }
   },
   "remoteconfig": {
     "template": "remoteconfig.template.json"
+  },
+  "extensions": {
+    "firestore-send-email": "firebase/firestore-send-email@0.1.34"
   }
 }

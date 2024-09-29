@@ -1,0 +1,71 @@
+import { useState } from "react";
+import { useSessionStorage } from "usehooks-ts";
+import { Footer, Header, Main } from "../components";
+
+type Props = {
+  returnTo: string;
+};
+
+export function ProvideAccessCode({ returnTo }: Props) {
+  console.debug("Rendering page ProvideAccessCode");
+
+  const [busy, setBusy] = useState(false);
+  const [accessCode] = useSessionStorage("accessCode", "");
+
+  return (
+    <>
+      <Header>Provide access code</Header>
+      <Main>
+        <article>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              setBusy(true);
+
+              const form = e.target as HTMLFormElement;
+              const formData = new FormData(form);
+              const accessCode = String(
+                formData.get("accessCode"),
+              ).toLowerCase();
+
+              window.location.href = `${returnTo}?accessCode=${accessCode}`;
+            }}
+          >
+            <fieldset role="group">
+              <input
+                name="accessCode"
+                type="text"
+                required
+                placeholder="Enter the access code to view this exam"
+                aria-label="Access code"
+                aria-describedby="access-code-helper"
+                aria-invalid={accessCode ? "true" : undefined}
+                onChange={(event) => {
+                  if (event.target.checkValidity()) {
+                    event.target.setAttribute("aria-invalid", "false");
+                  } else {
+                    event.target.setAttribute("aria-invalid", "true");
+                  }
+                }}
+              />
+              <button
+                type="submit"
+                disabled={busy}
+                aria-busy={busy ? "true" : "false"}
+              >
+                View
+              </button>
+            </fieldset>{" "}
+            {accessCode ? (
+              <small id="access-code-helper" className="invalid">
+                The access code you provided is incorrect.
+              </small>
+            ) : null}
+          </form>
+        </article>
+      </Main>
+      <Footer />
+    </>
+  );
+}

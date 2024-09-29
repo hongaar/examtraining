@@ -1,9 +1,9 @@
-import { FirestoreCollection, sluggify } from "@examtraining/core";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { sluggify } from "@examtraining/core";
+import { FormEvent, useCallback, useState } from "react";
+import { useSessionStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
-import { useCollectionOnce } from "../../hooks";
-import { useFunction } from "../../hooks/useFunction";
+import { useFunction } from "../../hooks";
 import { Description, Email, Private, Title, Url } from "./Fields";
 
 const DUMMY_DATA = true;
@@ -12,18 +12,14 @@ export function NewExamForm() {
   console.debug("Rendering component NewExamForm");
 
   const [slug, setSlug] = useState("");
-  const [exams] = useCollectionOnce(FirestoreCollection.Exams);
+  const isSlugAvailable = useFunction(Functions.IsSlugAvailable);
   const createExam = useFunction(Functions.CreateExam);
   const [saving, setSaving] = useState(false);
-  const [existingsSlugs, setExistingSlugs] = useState<string[]>([]);
+  const [slugCheckInProgress, setSlugCheckInProgress] = useState(false);
   const [urlInvalid, setUrlInvalid] = useState<boolean | undefined>(undefined);
   const [, setLocation] = useLocation();
-
-  useEffect(() => {
-    if (exams !== null) {
-      setExistingSlugs(exams.map((exam) => exam.id));
-    }
-  }, [exams]);
+  const [, , removeAccessCode] = useSessionStorage("accessCode", "");
+  const [, , removeEditCode] = useSessionStorage("editCode", "");
 
   const addExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -32,13 +28,17 @@ export function NewExamForm() {
       const data = new FormData(event.target as any);
 
       setSaving(true);
+      removeAccessCode();
+      removeEditCode();
       try {
         await progress(
           createExam({
-            title: data.get("title") as string,
-            description: data.get("description") as string,
+            exam: {
+              title: data.get("title") as string,
+              description: data.get("description") as string,
+              private: data.get("private") === "on",
+            },
             owner: data.get("email") as string,
-            private: data.get("private") === "on",
           }),
           "Creating exam",
         );
@@ -49,7 +49,7 @@ export function NewExamForm() {
         setSaving(false);
       }
     },
-    [createExam, setLocation, slug],
+    [createExam, removeAccessCode, removeEditCode, setLocation, slug],
   );
 
   return (
@@ -67,12 +67,21 @@ export function NewExamForm() {
                 event.target.setAttribute("aria-invalid", "true");
               }
 
-              if (existingsSlugs.includes(sluggify(event.target.value))) {
-                setUrlInvalid(true);
-                event.target.setAttribute("aria-invalid", "true");
-              } else {
-                setUrlInvalid(undefined);
-                event.target.setAttribute("aria-invalid", "false");
+              if (event.target.value !== "") {
+                setSlugCheckInProgress(true);
+                isSlugAvailable({ slug: sluggify(event.target.value) })
+                  .then((result) => {
+                    if (!result) {
+                      setUrlInvalid(true);
+                      event.target.setAttribute("aria-invalid", "true");
+                    } else {
+                      setUrlInvalid(false);
+                      event.target.setAttribute("aria-invalid", "false");
+                    }
+                  })
+                  .finally(() => {
+                    setSlugCheckInProgress(false);
+                  });
               }
             }}
             helper={
@@ -81,7 +90,7 @@ export function NewExamForm() {
                 : undefined
             }
           />
-          <Url slug={slug} invalid={urlInvalid} />
+          <Url busy={slugCheckInProgress} slug={slug} invalid={urlInvalid} />
           <Description
             onChange={(event) => {
               if (event.target.checkValidity()) {
@@ -120,8 +129,8 @@ export function NewExamForm() {
               Cancel
             </button>
             <button
-              disabled={saving}
-              aria-busy={saving ? "true" : "false"}
+              disabled={saving || slugCheckInProgress || urlInvalid}
+              aria-busy={saving || slugCheckInProgress ? "true" : "false"}
               type="submit"
             >
               Create

@@ -4,8 +4,10 @@ export function Footer() {
   return (
     <footer className="container">
       <p>
-        All rights reserved. Made by{" "}
-        <a href="https://joram.dev">Joram van den Boezem</a>.
+        <small>
+          All rights reserved. Made by{" "}
+          <a href="https://joram.dev">Joram van den Boezem</a>.
+        </small>
       </p>
     </footer>
   );

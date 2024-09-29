@@ -7,7 +7,6 @@
     "@examtraining/core": "workspace:*",
     "@examtraining/functions": "workspace:*",
     "@picocss/pico": "2.0.6",
-    "date-fns": "4.1.0",
     "firebase": "10.13.2",
     "lodash.isequal": "4.5.0",
     "randomcolor": "0.6.2",

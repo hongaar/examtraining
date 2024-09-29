@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 
 export function progress<T>(promise: Promise<T>, msg: string) {
@@ -9,24 +8,25 @@ export function progress<T>(promise: Promise<T>, msg: string) {
   });
 }
 
-export function dateFormat(date: Date) {
-  const formatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  } as const;
-  return new Intl.DateTimeFormat("nl", formatOptions).format(date);
-}
+export function parseDoc<T>(data: T | null | undefined) {
+  if (typeof data === "undefined") {
+    return undefined;
+  }
 
-export function daterangeFormat(date1: Date, date2: Date) {
-  const formatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  } as const;
-  return new Intl.DateTimeFormat("nl", formatOptions).formatRange(date1, date2);
-}
+  if (data === null) {
+    return null;
+  }
 
-export function formatIso(date: Date) {
-  return format(date, "yyyy-MM-dd");
+  Object.entries(data).forEach(([key, value]) => {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      value.constructor === Object &&
+      value._time
+    ) {
+      data[key as keyof T] = new Date(value._time) as any;
+    }
+  });
+
+  return data;
 }

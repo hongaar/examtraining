@@ -1,10 +1,9 @@
 import {
   User as FirebaseUser,
-  GoogleAuthProvider,
   connectAuthEmulator,
   getAuth,
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithCustomToken,
   signOut,
 } from "firebase/auth";
 import { createContext, useEffect, useMemo, useState } from "react";
@@ -23,7 +22,7 @@ type User = {
 
 type Context = {
   user: User | null;
-  login: () => Promise<void>;
+  login: (secret: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -45,7 +44,6 @@ export function AuthProvider({ children }: Props) {
   console.debug("Rendering AuthProvider");
 
   const [user, setUser] = useState<User>(null);
-
   const firebase = useFirebase();
 
   const auth = useMemo(() => {
@@ -60,22 +58,6 @@ export function AuthProvider({ children }: Props) {
     return auth;
   }, [firebase]);
 
-  const provider = useMemo(() => {
-    const provider = new GoogleAuthProvider();
-
-    // See https://developers.google.com/identity/protocols/oauth2/scopes#photoslibrary
-    // provider.addScope("https://www.googleapis.com/auth/photoslibrary.readonly");
-
-    return provider;
-  }, []);
-
-  // useEffect(() => {
-  //   (window as any).login_from_google = (googleUser: any) => {
-  //     const credential = GoogleAuthProvider.credential(googleUser.credential);
-  //     signInWithCredential(auth, credential);
-  //   };
-  // }, []);
-
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -86,9 +68,11 @@ export function AuthProvider({ children }: Props) {
     });
   }, [auth]);
 
-  async function login() {
+  async function login(secret: string) {
     try {
-      await signInWithPopup(auth, provider);
+      const userCredential = await signInWithCustomToken(auth, secret);
+
+      console.log({ userCredential });
     } catch (error: any) {
       console.error(error);
     }

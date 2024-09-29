@@ -14,7 +14,7 @@
     "start:web": "yarn workspace @examtraining/web run start",
     "start:functions": "yarn workspace @examtraining/functions run build:watch",
     "start:core": "yarn workspace @examtraining/core run build:watch",
-    "start:emulator": "firebase emulators:start --only hosting,functions,firestore",
+    "start:emulator": "firebase emulators:start",
     "build": "yarn workspaces foreach --all --topological --verbose run build",
     "build:watch": "yarn workspaces foreach --all --parallel --interlaced run build:watch",
     "format": "prettier --write --ignore-unknown .",

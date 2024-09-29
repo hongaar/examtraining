@@ -10,7 +10,11 @@ export function Error() {
         <title>Error</title>
       </Helmet>
       <Header>Error</Header>
-      <Main>Something is not right 🤔</Main>
+      <Main>
+        <article>
+          <p>Something is not right 🤔</p>
+        </article>
+      </Main>
       <Footer />
     </>
   );

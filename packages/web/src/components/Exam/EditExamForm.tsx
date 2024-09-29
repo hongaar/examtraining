@@ -1,18 +1,19 @@
-import { AddId, Exam } from "@examtraining/core";
+import { ExamWithQuestions } from "@examtraining/core";
 import { FormEvent, useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
-import { useFunction } from "../../hooks/useFunction";
+import { useEditCode, useFunction } from "../../hooks";
 import { Description, Private, Title } from "./Fields";
 
 type Props = {
-  exam: AddId<Exam>;
+  exam: ExamWithQuestions;
 };
 
 export function EditExamForm({ exam }: Props) {
   console.debug("Rendering component EditExamForm");
 
   const slug = exam.id;
+  const editCode = useEditCode();
   const [, setLocation] = useLocation();
   const editExamDetails = useFunction(Functions.EditExamDetails);
   const [saving, setSaving] = useState(false);
@@ -23,11 +24,16 @@ export function EditExamForm({ exam }: Props) {
 
       const data = new FormData(event.target as any);
 
+      if (!editCode) {
+        throw new Error("Edit code not set.");
+      }
+
       setSaving(true);
       try {
         await progress(
           editExamDetails({
             slug,
+            editCode,
             data: {
               title: data.get("title") as string,
               description: data.get("description") as string,
@@ -39,11 +45,12 @@ export function EditExamForm({ exam }: Props) {
         setLocation(`/${slug}`);
       } catch (error) {
         console.error(error);
+        throw error;
       } finally {
         setSaving(false);
       }
     },
-    [editExamDetails, setLocation, slug],
+    [editCode, editExamDetails, setLocation, slug],
   );
 
   return (
@@ -70,7 +77,6 @@ export function EditExamForm({ exam }: Props) {
                 event.target.setAttribute("aria-invalid", "true");
               }
             }}
-            helper="A longer description of the exam. This is optional."
           />
           <Private defaultChecked={exam.private} />
         </fieldset>

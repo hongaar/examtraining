@@ -1,28 +1,26 @@
-import { FirestoreCollection } from "@examtraining/core";
 import { Helmet } from "react-helmet";
-import { Link } from "wouter";
 import { Footer, Header, Loading, Main } from "../components";
-import { useCollectionOnce, useDocumentOnce } from "../hooks";
+import { PermissionDenied, useAccessCode, useExam } from "../hooks";
 import { NotFound } from "./NotFound";
+import { ProvideAccessCode } from "./ProvideAccessCode";
 
 export function Training({ params }: { params: { exam: string } }) {
   console.debug("Rendering page Training");
 
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
-  const exam = useDocumentOnce(FirestoreCollection.Exams, slug);
-  const questionsPath = [
-    FirestoreCollection.Exams,
-    slug,
-    FirestoreCollection.Questions,
-  ] as const;
-  const [questions] = useCollectionOnce(...questionsPath);
+  const accessCode = useAccessCode();
+  const { exam } = useExam(slug, { accessCode });
 
-  if (exam === undefined) {
-    return <NotFound />;
+  if (exam instanceof PermissionDenied) {
+    return <ProvideAccessCode returnTo={`/${slug}`} />;
   }
 
-  if (exam === null || questions === null) {
+  if (exam === undefined) {
     return <Loading>Loading exam...</Loading>;
+  }
+
+  if (exam === null) {
+    return <NotFound />;
   }
 
   return (
@@ -30,21 +28,11 @@ export function Training({ params }: { params: { exam: string } }) {
       <Helmet>
         <title>{exam.title}</title>
       </Helmet>
-      <Header>{exam.title}</Header>
+      <Header>Exam training</Header>
       <Main>
         <article>
-          {exam.description ? <p>{exam.description}</p> : null}
-          <Link href={`/${slug}/edit`}>Edit exam details and questions</Link>
-        </article>
-        <article>
-          <h3>Questions</h3>
-          <p>
-            This exam contains {questions.length} question
-            {questions.length !== 1 ? "s" : ""}.
-          </p>
-          <Link role="button" href={`/${slug}/training`}>
-            Start training
-          </Link>
+          <h3>{exam.title}</h3>
+          training...
         </article>
       </Main>
       <Footer />

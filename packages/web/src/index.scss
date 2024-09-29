@@ -4,6 +4,7 @@
   font-family: "Fira Sans", sans-serif;
 
   --pico-spacing: 1.5rem;
+  --pico-typography-spacing-vertical: var(--pico-spacing);
 }
 
 // layout
@@ -16,7 +17,18 @@
   }
 }
 
-// correct spacing
+// tweak spacing
+
+fieldset legend,
+label {
+  margin-bottom: calc(var(--pico-spacing));
+}
+
+article {
+  :last-child:not(footer) {
+    margin-block-end: 0;
+  }
+}
 
 header hgroup {
   margin-block-end: 0;
@@ -25,7 +37,7 @@ header hgroup {
 article {
   header {
     :last-child {
-      margin-bottom: 0;
+      margin-block-end: 0;
     }
   }
 
@@ -43,33 +55,10 @@ article {
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: "Chakra Petch", sans-serif;
   font-weight: normal;
-}
-
-hgroup {
-  > :not(:first-child):last-child {
-    font-size: 1.4rem;
-  }
-
-  > h1 {
-    display: inline;
-  }
-
-  > h2 {
-    display: inline;
-
-    &::before {
-      margin: 0 var(--pico-block-spacing-vertical);
-      color: var(--pico-muted-border-color);
-      content: "|";
-    }
-  }
-}
-
-hr {
-  margin: calc(var(--spacing) * 1.5) 0;
 }
 
 p {
@@ -118,4 +107,63 @@ button.link {
   font-size: 0.7rem;
   line-height: 1;
   text-transform: uppercase;
+}
+
+// helpers
+
+small.invalid {
+  color: var(--pico-del-color);
+}
+
+.align-right {
+  text-align: right;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+// components
+
+// site title
+hgroup {
+  > h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  > :not(:first-child):last-child {
+    font-size: 1.4rem;
+  }
+
+  @media (min-width: 768px) {
+    > h1 {
+      display: inline;
+    }
+
+    > h2 {
+      display: inline;
+
+      &::before {
+        margin: 0 var(--pico-block-spacing-vertical);
+        color: var(--pico-muted-border-color);
+        content: "|";
+      }
+    }
+  }
+}
+
+// answer input
+.answer {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+
+  > *:not(input[type="text"]) {
+    flex-shrink: 0;
+  }
+
+  // input
+  > input[type="text"] {
+    flex-grow: 1;
+  }
 }

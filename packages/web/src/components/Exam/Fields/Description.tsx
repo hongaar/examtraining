@@ -1,10 +1,9 @@
 type Props = {
   defaultValue?: string;
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  helper?: string;
 };
 
-export function Description({ defaultValue, onChange, helper }: Props) {
+export function Description({ defaultValue, onChange }: Props) {
   return (
     <label>
       Description
@@ -14,11 +13,21 @@ export function Description({ defaultValue, onChange, helper }: Props) {
         aria-label="Description"
         aria-describedby="description-helper"
         defaultValue={defaultValue}
-        maxLength={500}
+        maxLength={1000}
         rows={5}
         onChange={onChange}
       />
-      {helper ? <small id="title-helper">{helper}</small> : undefined}
+      <small id="title-helper">
+        A longer description of the exam. This is optional. You can use{" "}
+        <a
+          href="https://www.markdownguide.org/basic-syntax/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Markdown formatting
+        </a>
+        .
+      </small>
     </label>
   );
 }

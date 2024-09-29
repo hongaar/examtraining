@@ -7,20 +7,24 @@ try {
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
-import { Exam, FirestoreCollection } from "@examtraining/core";
-import { collectionRef, docRef, getDocument } from "./utils";
+import {
+  FirestoreCollection,
+  Question,
+  QuestionWithAnswers,
+} from "@examtraining/core";
+import { collectionRef, getDocument } from "./utils";
 
-type EditExamDetailsParams = {
+type CreateExamQuestionParams = {
   slug: string;
   editCode: string;
-  data: Partial<Exam>;
+  data: QuestionWithAnswers;
 };
 
-type EditExamDetailsReturn = {};
+type CreateExamQuestionReturn = {};
 
-export const editExamDetails = onCall<
-  EditExamDetailsParams,
-  Promise<EditExamDetailsReturn>
+export const createExamQuestion = onCall<
+  CreateExamQuestionParams,
+  Promise<CreateExamQuestionReturn>
 >({ region: "europe-west1", cors: "*" }, async ({ data }) => {
   if (!data.slug) {
     throw new HttpsError("invalid-argument", "slug not specified.");
@@ -31,8 +35,6 @@ export const editExamDetails = onCall<
   }
 
   try {
-    const mail = collectionRef(FirestoreCollection.Mail);
-
     const exam = await getDocument(FirestoreCollection.Exams, data.slug);
 
     // Check for document existence
@@ -54,26 +56,31 @@ export const editExamDetails = onCall<
       );
     }
 
-    // Update
-    await docRef(FirestoreCollection.Exams, data.slug).update(data.data);
+    // Add question
+    const questionRef = await collectionRef(
+      FirestoreCollection.Exams,
+      data.slug,
+      FirestoreCollection.Questions,
+    ).add({
+      order: data.data.order,
+      description: data.data.description,
+      explanation: data.data.explanation,
+    } as Question);
 
-    // Queue mail
-    if (exam.private === false && data.data.private === true) {
-      await mail.add({
-        to: secrets.data()!.owner,
-        message: {
-          subject: "Exam made private",
-          html: `Your exam "${exam.title}" is now private.<br/>
-<br/>
-In order to view it you need an access code.<br/>
-The access code is: <code>${secrets.data()!.accessCode}</code><br/>
-Access the exam by using this link: <a href="https://examtraining.online/${data.slug}?accessCode=${secrets.data()!.accessCode}">https://examtraining.online/${data.slug}?accessCode=${secrets.data()!.accessCode}</a><br/>
-<br/>`,
-        },
-      });
+    // Add answers
+    const answers = collectionRef(
+      FirestoreCollection.Exams,
+      data.slug,
+      FirestoreCollection.Questions,
+      questionRef.id,
+      FirestoreCollection.Answers,
+    );
+
+    for (const answer of data.data.answers) {
+      await answers.add(answer);
     }
 
-    logger.info({ message: "edited exam details", data });
+    logger.info({ message: "created exam question", data });
 
     return {};
   } catch (error) {

@@ -8,7 +8,7 @@ export function Loading({ children }: Props) {
   console.debug("Rendering component Loading");
 
   return (
-    <Delayed delay={0}>
+    <Delayed delay={500}>
       <main className="container">
         <span aria-busy="true">{children}</span>
       </main>

@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { Route, Switch } from "wouter";
 import {
   EditExamDetails,
+  EditExamQuestions,
   Exam,
   Homepage,
   NewExam,
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/new" component={NewExam} />
         <Route path="/:exam/training" component={Training} />
         <Route path="/:exam/edit" component={EditExamDetails} />
+        <Route path="/:exam/questions" component={EditExamQuestions} />
         <Route path="/:exam" component={Exam} />
         <Route path="/" component={Homepage} />
         <Route component={NotFound} />

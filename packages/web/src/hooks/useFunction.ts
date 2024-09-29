@@ -2,9 +2,8 @@ import {
   connectFunctionsEmulator,
   getFunctions,
   httpsCallable,
-  HttpsCallableResult,
 } from "firebase/functions";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FunctionParams,
   FunctionReturn,
@@ -35,20 +34,35 @@ function useFunctions() {
 export function useFunction<F extends Functions>(fn: F) {
   const functions = useFunctions();
   const call = useCallback(
-    async (
-      data?: FunctionParams<FunctionTypes[typeof fn]>,
-    ): Promise<
-      HttpsCallableResult<FunctionReturn<FunctionTypes[typeof fn]>> | undefined
-    > => {
+    async (data?: FunctionParams<FunctionTypes[typeof fn]>) => {
+      // return type : Promise<FunctionReturn<FunctionTypes[typeof fn]> | undefined>
       const callable = httpsCallable<
         FunctionParams<FunctionTypes[typeof fn]>,
         FunctionReturn<FunctionTypes[typeof fn]>
       >(functions, fn);
 
-      return callable(data);
+      return (await callable(data)).data;
     },
     [functions, fn],
   );
 
   return call;
+}
+
+export function useFunctionResult<F extends Functions>(
+  fn: F,
+  args: FunctionParams<FunctionTypes[F]>,
+) {
+  const call = useFunction(fn);
+  const [result, setResult] = useState<
+    FunctionReturn<FunctionTypes[F]> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    call(args).then((result) => {
+      setResult(result);
+    });
+  }, [args, call]);
+
+  return result;
 }
