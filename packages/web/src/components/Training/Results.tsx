@@ -56,7 +56,12 @@ export function Results({ exam }: Props) {
                   ? "correct"
                   : "incorrect"
               }
-              open
+              open={
+                question.answers.find((a) => a.correct)?.id ===
+                answers[question.id]
+                  ? undefined
+                  : true
+              }
             >
               <summary title={String(i + 1)}>{question.description}</summary>
               <ul>
