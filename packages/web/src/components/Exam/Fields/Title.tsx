@@ -1,3 +1,5 @@
+import { TITLE_MAX_LENGTH } from "../../../api";
+
 type Props = {
   defaultValue?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,11 +12,12 @@ export function Title({ defaultValue, onChange, helper }: Props) {
       Title
       <input
         name="title"
+        type="text"
         placeholder="A short, descriptive title"
         aria-label="Title"
         aria-describedby="title-helper"
         required
-        maxLength={50}
+        maxLength={TITLE_MAX_LENGTH}
         defaultValue={defaultValue}
         onChange={onChange}
       />

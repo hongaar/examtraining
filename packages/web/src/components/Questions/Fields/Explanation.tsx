@@ -4,16 +4,15 @@ type Props = {
   defaultValue?: string;
 };
 
-export function Description({ defaultValue }: Props) {
+export function Explanation({ defaultValue }: Props) {
   return (
     <label>
-      Description
+      Explanation
       <textarea
-        name="description"
-        placeholder="The question"
-        aria-label="Description"
-        aria-describedby="description-helper"
-        required
+        name="explanation"
+        placeholder="The explanation"
+        aria-label="Explanation"
+        aria-describedby="explanation-helper"
         maxLength={STRING_MAX_LENGTH}
         rows={3}
         defaultValue={defaultValue}
@@ -25,8 +24,9 @@ export function Description({ defaultValue }: Props) {
           }
         }}
       />
-      <small id="description-helper">
-        This will be shown as the main question text. You can use{" "}
+      <small id="explanation-helper">
+        This will be shown after a question has been answered. This is optional.
+        You can use{" "}
         <a
           href="https://www.markdownguide.org/basic-syntax/"
           target="_blank"

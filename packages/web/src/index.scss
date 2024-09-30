@@ -7,6 +7,12 @@
   --pico-typography-spacing-vertical: var(--pico-spacing);
 }
 
+@counter-style checkmark {
+  system: cyclic;
+  symbols: "\2705"; // unicode code point
+  suffix: " ";
+}
+
 // layout
 
 #root {
@@ -21,7 +27,7 @@
 
 fieldset legend,
 label {
-  margin-bottom: calc(var(--pico-spacing));
+  margin-bottom: var(--pico-spacing);
 }
 
 article {
@@ -61,7 +67,8 @@ h4 {
   font-weight: normal;
 }
 
-p {
+p,
+summary {
   font-family: "Lora", serif;
 }
 
@@ -102,7 +109,7 @@ button.link {
   font-family: "Fira Sans", sans-serif;
   display: inline-block;
   padding: 0.4rem 0.6rem;
-  margin: 0 0.5rem 0 0;
+  margin: 0 0 0 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.7rem;
   line-height: 1;
@@ -152,18 +159,102 @@ hgroup {
   }
 }
 
-// answer input
-.answer {
+// article title
+article h3 {
   display: flex;
-  gap: 1rem;
-  align-items: baseline;
+  align-items: center;
 
-  > *:not(input[type="text"]) {
-    flex-shrink: 0;
+  .badge:first-child {
+    margin-left: var(--pico-spacing);
+  }
+}
+
+// training
+.training {
+  font-size: 1.5em;
+
+  ul {
+    padding: 0;
+
+    li {
+      font-family: "Lora", serif;
+      list-style: none;
+    }
+  }
+}
+
+// list with correct item
+li.correct {
+  list-style-type: checkmark;
+}
+
+// questions
+details {
+  summary {
+    line-height: inherit;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    color: var(--pico-color) !important;
+
+    &::before {
+      position: absolute;
+      display: block;
+      margin-left: -2rem;
+      content: attr(title) ".";
+    }
+
+    &::after {
+      position: relative;
+      left: 2rem;
+    }
   }
 
-  // input
-  > input[type="text"] {
-    flex-grow: 1;
+  ul {
+    padding-left: 3rem;
+  }
+
+  &.correct,
+  &.incorrect {
+    border-left: 0.5rem solid red;
+    padding-left: 1rem;
+  }
+
+  &.correct {
+    border-color: var(--pico-ins-color);
+  }
+
+  &.incorrect {
+    border-color: var(--pico-del-color);
+  }
+}
+
+// answer table in the question form
+.answers-inputs {
+  > label {
+    margin-bottom: calc(var(--pico-spacing) * 0.25);
+  }
+
+  .answer {
+    display: flex;
+    gap: calc(var(--pico-spacing) * 0.5);
+    align-items: baseline;
+
+    > *:not(input[type="text"]) {
+      flex-shrink: 0;
+    }
+
+    // input
+    > input[type="text"] {
+      flex-grow: 1;
+    }
+
+    > label,
+    > input {
+      margin-bottom: calc(var(--pico-spacing) * 0.5);
+    }
+
+    &:last-child {
+      margin-bottom: var(--pico-spacing);
+    }
   }
 }

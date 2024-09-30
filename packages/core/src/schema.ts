@@ -46,6 +46,7 @@ export type Exam = {
   title: string;
   description: string | null;
   questions: CollectionReference<Question>;
+  threshold: number; // percentage, between 0 and 100
   private: boolean;
   created: Date;
   secrets: DocumentReference<Secret>;

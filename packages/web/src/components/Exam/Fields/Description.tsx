@@ -1,3 +1,5 @@
+import { STRING_MAX_LENGTH } from "../../../api";
+
 type Props = {
   defaultValue?: string;
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -13,7 +15,7 @@ export function Description({ defaultValue, onChange }: Props) {
         aria-label="Description"
         aria-describedby="description-helper"
         defaultValue={defaultValue}
-        maxLength={1000}
+        maxLength={STRING_MAX_LENGTH}
         rows={5}
         onChange={onChange}
       />

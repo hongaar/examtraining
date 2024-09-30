@@ -151,17 +151,19 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           {exam.questions.map((question, i) => (
             <>
               <details>
-                <summary>{question.description}</summary>
+                <summary title={String(i + 1)}>{question.description}</summary>
                 <ul>
                   {question.answers.map((answer) => (
-                    <li key={answer.id}>
-                      {answer.correct ? "✅ " : "❌ "}
+                    <li
+                      key={answer.id}
+                      className={answer.correct ? "correct" : undefined}
+                    >
                       {answer.description}
                     </li>
                   ))}
                 </ul>
                 <button
-                  className="inline secondary"
+                  className="inline outline"
                   onClick={() => {
                     setEditQuestion(question);
                     document
@@ -172,7 +174,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                   🖊️ Edit question
                 </button>{" "}
                 <button
-                  className="inline secondary"
+                  className="inline outline  secondary"
                   onClick={() => {
                     onRemoveQuestion(question.id);
                   }}

@@ -54,7 +54,7 @@ export function ProvideAccessCode({ returnTo }: Props) {
                 disabled={busy}
                 aria-busy={busy ? "true" : "false"}
               >
-                View
+                👁️ View
               </button>
             </fieldset>{" "}
             {accessCode ? (

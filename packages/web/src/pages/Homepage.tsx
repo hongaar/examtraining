@@ -28,7 +28,7 @@ export function Homepage() {
             <p>Visit an exam by entering its unique code below:</p>
             <fieldset role="group">
               <input type="text" name="slug" placeholder="Unique exam code" />
-              <input type="submit" value="View" />
+              <button type="submit">👁️ View</button>
             </fieldset>
           </form>
         </article>
@@ -48,7 +48,7 @@ export function Homepage() {
           <h2>Create exam</h2>
           <p>Everyone can create a new exam:</p>
           <Link role="button" href="/new">
-            New exam
+            ✨ New exam
           </Link>
         </article>
       </Main>

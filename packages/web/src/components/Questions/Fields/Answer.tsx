@@ -1,4 +1,5 @@
 import { Answer as AnswerType } from "@examtraining/core";
+import { STRING_MAX_LENGTH } from "../../../api";
 
 type Props = {
   answer?: AnswerType;
@@ -34,22 +35,32 @@ export function Answer({
 
   return (
     <div className="answer">
-      <label className={answer ? undefined : "hidden"}>
+      <label>
         <input
           type="checkbox"
           name="correct"
           role="switch"
           aria-label="Correct"
+          disabled={!answer}
           checked={answer?.correct}
           onChange={handleChangeCorrect}
         />
-        {answer?.correct ? "✅" : "❌"}
+        {answer ? (
+          answer.correct ? (
+            "✅"
+          ) : (
+            "❌"
+          )
+        ) : (
+          <span className="hidden">❌</span>
+        )}
       </label>
       <input
         ref={inputRef as any}
         type="text"
         name="description"
         placeholder={answer ? "The answer goes here" : "Add a new answer"}
+        maxLength={STRING_MAX_LENGTH}
         aria-label="Answer"
         required={answer ? true : undefined}
         value={answer ? answer.description : ""}

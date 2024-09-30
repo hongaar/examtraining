@@ -8,6 +8,7 @@ import {
   useAccessCode,
   useExam,
   useRecentExams,
+  useTraining,
 } from "../hooks";
 import { NotFound } from "./NotFound";
 import { ProvideAccessCode } from "./ProvideAccessCode";
@@ -19,6 +20,8 @@ export function Exam({ params }: { params: { exam: string } }) {
   const accessCode = useAccessCode();
   const { exam } = useExam(slug, { accessCode });
   const { addRecentExam } = useRecentExams();
+  const { trainingQuestions, current, setTrainingQuestions } =
+    useTraining(slug);
 
   useEffect(() => {
     if (
@@ -44,6 +47,9 @@ export function Exam({ params }: { params: { exam: string } }) {
     return <NotFound />;
   }
 
+  const trainingFinished =
+    trainingQuestions.length > 0 && !trainingQuestions[current];
+
   return (
     <>
       <Helmet>
@@ -52,8 +58,8 @@ export function Exam({ params }: { params: { exam: string } }) {
       <Header>Exam details</Header>
       <Main>
         <article>
-          <h3>{exam.title}</h3>
-          <p>
+          <h3>
+            {exam.title}
             <span className="badge">
               {exam.private ? (
                 <>🔒 This exam is private</>
@@ -64,17 +70,47 @@ export function Exam({ params }: { params: { exam: string } }) {
             <span className="badge">
               📅 Created at {exam.created.toLocaleDateString()}
             </span>
-          </p>
+          </h3>
           {exam.description ? <Markdown>{exam.description}</Markdown> : null}
           <footer>
             🖊️ <Link href={`/${slug}/edit`}>Edit exam details</Link>
           </footer>
         </article>
         <article>
-          <h3>Questions</h3>
+          <h3>
+            Questions
+            <span className="badge">
+              ✅ Threshold to pass: {exam.threshold}%
+            </span>
+          </h3>
           <p>This exam has {exam.questions.length} questions.</p>
-          <Link role="button" href={`/${slug}/training`}>
-            Start training
+          {trainingQuestions.length > 0 ? (
+            trainingFinished ? (
+              <>
+                <Link role="button" href={`/${slug}/training`}>
+                  📊 Show results of last training
+                </Link>{" "}
+              </>
+            ) : (
+              <>
+                <Link role="button" href={`/${slug}/training`}>
+                  ↪️ Continue last training
+                </Link>{" "}
+              </>
+            )
+          ) : null}
+          <Link
+            role="button"
+            className={trainingQuestions.length > 0 ? "secondary" : ""}
+            data-tooltip={
+              trainingQuestions.length > 0
+                ? "This will clear the results of the last training"
+                : undefined
+            }
+            onClick={() => setTrainingQuestions([])}
+            href={`/${slug}/training`}
+          >
+            💪 Start new training
           </Link>
           <footer>
             ❓ <Link href={`/${slug}/questions`}>Edit questions</Link>

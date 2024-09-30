@@ -54,7 +54,7 @@ export function ProvideEditCode({ returnTo }: Props) {
                 disabled={busy}
                 aria-busy={busy ? "true" : "false"}
               >
-                View
+                👁️ View
               </button>
             </fieldset>{" "}
             {!busy && editCode ? (

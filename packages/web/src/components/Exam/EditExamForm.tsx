@@ -3,7 +3,7 @@ import { FormEvent, useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
 import { useEditCode, useFunction } from "../../hooks";
-import { Description, Private, Title } from "./Fields";
+import { Description, Private, Threshold, Title } from "./Fields";
 
 type Props = {
   exam: ExamWithQuestions;
@@ -37,6 +37,7 @@ export function EditExamForm({ exam }: Props) {
             data: {
               title: data.get("title") as string,
               description: data.get("description") as string,
+              threshold: Number(data.get("threshold")),
               private: data.get("private") === "on",
             },
           }),
@@ -78,6 +79,7 @@ export function EditExamForm({ exam }: Props) {
               }
             }}
           />
+          <Threshold defaultValue={exam.threshold} />
           <Private defaultChecked={exam.private} />
         </fieldset>
         <footer>
@@ -94,7 +96,7 @@ export function EditExamForm({ exam }: Props) {
               aria-busy={saving ? "true" : "false"}
               type="submit"
             >
-              Save details
+              💾 Save details
             </button>
           </fieldset>
         </footer>
