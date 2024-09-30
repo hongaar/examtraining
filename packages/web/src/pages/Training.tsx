@@ -50,7 +50,12 @@ export function Training({ params }: { params: { exam: string } }) {
                   Number(formData.get("questions")),
                 );
 
-                setTrainingQuestions(questions);
+                setTrainingQuestions(
+                  questions.map((question) => ({
+                    ...question,
+                    answers: shuffle(question.answers),
+                  })),
+                );
               }}
             >
               <h3>{exam.title}</h3>
