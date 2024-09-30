@@ -114,6 +114,11 @@ button.link {
   font-size: 0.7rem;
   line-height: 1;
   text-transform: uppercase;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: inherit;
+  }
 }
 
 // helpers

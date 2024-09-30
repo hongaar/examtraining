@@ -70,20 +70,11 @@ export function Exam({ params }: { params: { exam: string } }) {
             <span className="badge">
               📅 Created at {exam.created.toLocaleDateString()}
             </span>
-          </h3>
-          {exam.description ? <Markdown>{exam.description}</Markdown> : null}
-          <footer>
-            🖊️ <Link href={`/${slug}/edit`}>Edit exam details</Link>
-          </footer>
-        </article>
-        <article>
-          <h3>
-            Questions
             <span className="badge">
               ✅ Threshold to pass: {exam.threshold}%
             </span>
           </h3>
-          <p>This exam has {exam.questions.length} questions.</p>
+          {exam.description ? <Markdown>{exam.description}</Markdown> : null}
           {trainingQuestions.length > 0 ? (
             trainingFinished ? (
               <>
@@ -113,7 +104,8 @@ export function Exam({ params }: { params: { exam: string } }) {
             💪 Start new training
           </Link>
           <footer>
-            ❓ <Link href={`/${slug}/questions`}>Edit questions</Link>
+            ❓ <Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp; 🖊️{" "}
+            <Link href={`/${slug}/edit`}>Edit details</Link>
           </footer>
         </article>
       </Main>
