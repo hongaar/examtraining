@@ -4,6 +4,7 @@ export * from "./Error";
 export * from "./Exam";
 export * from "./Homepage";
 export * from "./NewExam";
+export * from "./NewTraining";
 export * from "./NotFound";
 export * from "./ProvideAccessCode";
 export * from "./ProvideEditCode";

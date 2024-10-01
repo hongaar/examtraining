@@ -91,12 +91,7 @@ export function Results({ exam }: Props) {
           </>
         ))}
       </article>
-      <Link
-        role="button"
-        data-tooltip="This will clear the results of this training"
-        onClick={() => setTrainingQuestions([])}
-        href={`/${exam.id}/training`}
-      >
+      <Link role="button" href={`/${exam.id}/new-training`}>
         💪 Start new training
       </Link>{" "}
       or ⬅️ <Link to={`/${exam.id}`}>Back to exam</Link>

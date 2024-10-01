@@ -93,13 +93,7 @@ export function Exam({ params }: { params: { exam: string } }) {
           <Link
             role="button"
             className={trainingQuestions.length > 0 ? "secondary" : ""}
-            data-tooltip={
-              trainingQuestions.length > 0
-                ? "This will clear the results of the last training"
-                : undefined
-            }
-            onClick={() => setTrainingQuestions([])}
-            href={`/${slug}/training`}
+            href={`/${slug}/new-training`}
           >
             💪 Start new training
           </Link>

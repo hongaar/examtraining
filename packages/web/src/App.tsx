@@ -7,6 +7,7 @@ import {
   Exam,
   Homepage,
   NewExam,
+  NewTraining,
   NotFound,
   Training,
 } from "./pages";
@@ -20,6 +21,7 @@ export function App() {
       <Toaster />
       <Switch>
         <Route path="/new" component={NewExam} />
+        <Route path="/:exam/new-training" component={NewTraining} />
         <Route path="/:exam/training" component={Training} />
         <Route path="/:exam/edit" component={EditExamDetails} />
         <Route path="/:exam/questions" component={EditExamQuestions} />
