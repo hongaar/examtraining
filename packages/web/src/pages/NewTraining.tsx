@@ -80,6 +80,9 @@ export function NewTraining({ params }: { params: { exam: string } }) {
 
               questions = questions.slice(0, count);
 
+              // Shuffle incorrect questions with newQuestions
+              questions = shuffle(questions);
+
               setTrainingQuestions(
                 questions.map((question) => ({
                   ...question,
