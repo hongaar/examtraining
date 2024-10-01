@@ -14,6 +14,7 @@ import { NotFound } from "./NotFound";
 import { ProvideAccessCode } from "./ProvideAccessCode";
 
 const MAX_QUESTIONS_SUGGESTION = 20;
+const MAX_QUESTIONS = 50;
 
 export function NewTraining({ params }: { params: { exam: string } }) {
   console.debug("Rendering page Training");
@@ -120,7 +121,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
                 aria-describedby="questions-helper"
                 required
                 min={1}
-                max={exam.questions.length}
+                max={Math.min(MAX_QUESTIONS, exam.questions.length)}
                 defaultValue={Math.min(
                   MAX_QUESTIONS_SUGGESTION,
                   exam.questions.length,
