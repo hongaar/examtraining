@@ -51,7 +51,19 @@ export function EditQuestionForm({
       <article>
         <h3>Edit question</h3>
         <fieldset>
-          <Description defaultValue={question.description} />
+          <Description
+            defaultValue={question.description}
+            addAnswers={(answers) => {
+              setAnswers((prev) => [
+                ...prev,
+                ...answers.map((answer, index) => ({
+                  order: answers.length + index,
+                  description: answer,
+                  correct: false,
+                })),
+              ]);
+            }}
+          />
           <div className="answers-inputs">
             <label>Answers</label>
             {answers.map((answer, index) => (

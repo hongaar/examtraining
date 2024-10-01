@@ -1,5 +1,6 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import Markdown from "react-markdown";
+import nl2br from "react-nl2br";
 import { Link } from "wouter";
 import { useTraining } from "../../hooks";
 
@@ -63,7 +64,9 @@ export function Results({ exam }: Props) {
                   : true
               }
             >
-              <summary title={String(i + 1)}>{question.description}</summary>
+              <summary title={String(i + 1)}>
+                {nl2br(question.description)}
+              </summary>
               <ul>
                 {question.answers.map((answer) => (
                   <li

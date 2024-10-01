@@ -47,6 +47,16 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
         <fieldset>
           <Description
             defaultValue={USE_DUMMY_DATA ? "Dit is een test" : undefined}
+            addAnswers={(answers) => {
+              setAnswers((prev) => [
+                ...prev,
+                ...answers.map((answer, index) => ({
+                  order: answers.length + index,
+                  description: answer,
+                  correct: false,
+                })),
+              ]);
+            }}
           />
           <div className="answers-inputs">
             <label>

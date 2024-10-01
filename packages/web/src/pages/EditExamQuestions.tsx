@@ -1,6 +1,7 @@
 import { AddId, QuestionWithAnswers } from "@examtraining/core";
 import { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
+import nl2br from "react-nl2br";
 import { Link } from "wouter";
 import { Functions, progress } from "../api";
 import {
@@ -151,7 +152,9 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           {exam.questions.map((question, i) => (
             <>
               <details>
-                <summary title={String(i + 1)}>{question.description}</summary>
+                <summary title={String(i + 1)}>
+                  {nl2br(question.description)}
+                </summary>
                 <ul>
                   {question.answers.map((answer) => (
                     <li
