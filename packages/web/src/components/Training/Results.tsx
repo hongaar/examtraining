@@ -11,9 +11,7 @@ type Props = {
 export function Results({ exam }: Props) {
   console.debug("Rendering component Results");
 
-  const { trainingQuestions, setTrainingQuestions, answers } = useTraining(
-    exam.id,
-  );
+  const { trainingQuestions, answers } = useTraining(exam.id);
 
   const totalCorrect = trainingQuestions.reduce((total, question, index) => {
     const answer = answers[question.id];

@@ -20,8 +20,7 @@ export function Exam({ params }: { params: { exam: string } }) {
   const accessCode = useAccessCode();
   const { exam } = useExam(slug, { accessCode });
   const { addRecentExam } = useRecentExams();
-  const { trainingQuestions, current, setTrainingQuestions } =
-    useTraining(slug);
+  const { trainingQuestions, current } = useTraining(slug);
 
   useEffect(() => {
     if (
