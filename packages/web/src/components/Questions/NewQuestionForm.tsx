@@ -32,8 +32,8 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
       }
 
       onSubmit({
-        description: data.get("description") as string,
-        explanation: data.get("explanation") as string,
+        description: (data.get("description") as string).trim(),
+        explanation: (data.get("explanation") as string).trim(),
         answers: answers as AddId<Answer>[],
       });
     },

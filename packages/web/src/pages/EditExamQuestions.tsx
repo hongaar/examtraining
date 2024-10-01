@@ -1,7 +1,9 @@
 import { AddId, QuestionWithAnswers } from "@examtraining/core";
 import { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
+import { toast } from "react-hot-toast";
 import nl2br from "react-nl2br";
+import stringSimilarity from "string-similarity-js";
 import { Link } from "wouter";
 import { Functions, progress } from "../api";
 import {
@@ -15,6 +17,8 @@ import {
 import { PermissionDenied, useEditCode, useExam, useFunction } from "../hooks";
 import { NotFound } from "./NotFound";
 import { ProvideEditCode } from "./ProvideEditCode";
+
+const SIMILARITY_THRESHOLD = 0.95;
 
 export function EditExamQuestions({ params }: { params: { exam: string } }) {
   console.debug("Rendering page EditExamQuestions");
@@ -44,6 +48,24 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         throw new Error("Edit code not set.");
       }
 
+      // Check for existing similar questions
+      if (
+        !(exam instanceof PermissionDenied) &&
+        exam?.questions.some(
+          (q) =>
+            stringSimilarity(q.description, question.description || "") >
+            SIMILARITY_THRESHOLD,
+        )
+      ) {
+        toast(
+          "Please check this question, it is very similar to an existing question.",
+          {
+            icon: "⚠️",
+          },
+        );
+        return;
+      }
+
       setSaving(true);
       try {
         await progress(
@@ -64,7 +86,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [createExamQuestion, editCode, maxQuestionOrder, reload, slug],
+    [createExamQuestion, editCode, exam, maxQuestionOrder, reload, slug],
   );
 
   const onEditQuestion = useCallback(

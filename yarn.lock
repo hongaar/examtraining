@@ -1963,6 +1963,7 @@ __metadata:
     react-nl2br: "npm:1.0.4"
     react-scripts: "npm:5.0.1"
     sass: "npm:^1.79.3"
+    string-similarity-js: "npm:2.1.4"
     typescript: "npm:5.6.2"
     usehooks-ts: "npm:3.1.0"
     uuid: "npm:10.0.0"
@@ -17323,6 +17324,13 @@ __metadata:
   version: 3.0.1
   resolution: "string-natural-compare@npm:3.0.1"
   checksum: 10c0/85a6a9195736be500af5d817c7ea36b7e1ac278af079a807f70f79a56602359ee6743ca409af6291b94557de550ff60d1ec31b3c4fc8e7a08d0e12cdab57c149
+  languageName: node
+  linkType: hard
+
+"string-similarity-js@npm:2.1.4":
+  version: 2.1.4
+  resolution: "string-similarity-js@npm:2.1.4"
+  checksum: 10c0/b43ef3b08e72c1c5fb90904f01a4a669c9da1abdf8e42d13697e32371c976ef4060297a31437103960967b9715fe03f5af7f3d3cf318c1954d9684737d24b6a0
   languageName: node
   linkType: hard
 
