@@ -169,6 +169,17 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
       </Helmet>
       <Header>Edit exam questions</Header>
       <Main>
+        {editQuestion ? (
+          <EditQuestionForm
+            key={editQuestion.id}
+            question={editQuestion}
+            onCancel={() => setEditQuestion(undefined)}
+            onSubmit={onEditQuestion}
+            disabled={saving}
+          />
+        ) : (
+          <NewQuestionForm onSubmit={onNewQuestion} disabled={saving} />
+        )}
         <article>
           {exam.questions.length === 0 && <p>No questions yet.</p>}
           {exam.questions.map((question, i) => (
@@ -211,17 +222,6 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             </>
           ))}
         </article>
-        {editQuestion ? (
-          <EditQuestionForm
-            key={editQuestion.id}
-            question={editQuestion}
-            onCancel={() => setEditQuestion(undefined)}
-            onSubmit={onEditQuestion}
-            disabled={saving}
-          />
-        ) : (
-          <NewQuestionForm onSubmit={onNewQuestion} disabled={saving} />
-        )}
         ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
       </Main>
       <Footer />
