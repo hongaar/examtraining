@@ -5,7 +5,7 @@ type Props = {
 export function Threshold({ defaultValue = 75 }: Props) {
   return (
     <label>
-      Title
+      Pass threshold
       <input
         name="threshold"
         type="range"

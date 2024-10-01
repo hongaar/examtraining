@@ -77,31 +77,44 @@ export const getExam = onCall<GetExamParams, Promise<GetExamReturn>>(
       );
 
       const plainQuestions: PlainDoc<AddId<QuestionWithAnswers>>[] = [];
-      for (const question of questions) {
+      const promises: Promise<void>[] = [];
+
+      for (const key in questions) {
+        const question = questions[key];
         const plainQuestion = toPlainObject(
           question,
         ) as AddId<QuestionWithAnswers>;
 
-        const answers = toIdAndRef(
-          await collectionRef(
-            FirestoreCollection.Exams,
-            data.slug,
-            FirestoreCollection.Questions,
-            question.id,
-            FirestoreCollection.Answers,
-          )
-            .orderBy("order")
-            .get(),
+        promises.push(
+          new Promise(async (resolve) => {
+            await collectionRef(
+              FirestoreCollection.Exams,
+              data.slug,
+              FirestoreCollection.Questions,
+              question.id,
+              FirestoreCollection.Answers,
+            )
+              .orderBy("order")
+              .get()
+              .then((snapshot) => {
+                const answers = toIdAndRef(snapshot);
+
+                const plainAnswers: PlainDoc<AddId<Answer>>[] = [];
+                answers.forEach((answer) => {
+                  plainAnswers.push(
+                    toPlainObject(answer) as PlainDoc<AddId<Answer>>,
+                  );
+                });
+
+                plainQuestion.answers = plainAnswers;
+                plainQuestions[key] = plainQuestion;
+              })
+              .then(resolve);
+          }),
         );
-
-        const plainAnswers: PlainDoc<AddId<Answer>>[] = [];
-        answers.forEach((answer) => {
-          plainAnswers.push(toPlainObject(answer) as PlainDoc<AddId<Answer>>);
-        });
-
-        plainQuestion.answers = plainAnswers;
-        plainQuestions.push(plainQuestion);
       }
+
+      await Promise.all(promises);
 
       const plainExam = toPlainObject(exam);
       const examWithQuestions = {
