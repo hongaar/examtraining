@@ -1,5 +1,6 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import { useEffect, useRef, useState } from "react";
+import nl2br from "react-nl2br";
 import { useTraining } from "../../hooks";
 import { Results } from "./Results";
 
@@ -72,7 +73,7 @@ export function TrainQuestions({ exam }: Props) {
           }}
         >
           <article>
-            <p>{question.description}</p>
+            <p>{nl2br(question.description)}</p>
             <ul>
               {question.answers.map((answer, index) => (
                 <li key={answer.id}>
