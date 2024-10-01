@@ -1,6 +1,6 @@
 import { AddId, QuestionWithAnswers } from "@examtraining/core";
 import { useCallback, useEffect } from "react";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { useSearch } from "wouter";
 
 export function useSearchParams() {
@@ -16,7 +16,7 @@ export function useSearchParam(param: string) {
 }
 
 export function useAccessCode() {
-  const [accessCode, setAccessCode] = useSessionStorage<string | undefined>(
+  const [accessCode, setAccessCode] = useLocalStorage<string | undefined>(
     "accessCode",
     undefined,
   );
@@ -32,7 +32,7 @@ export function useAccessCode() {
 }
 
 export function useEditCode() {
-  const [editCode, setEditCode] = useSessionStorage<string | undefined>(
+  const [editCode, setEditCode] = useLocalStorage<string | undefined>(
     "editCode",
     undefined,
   );
@@ -56,10 +56,7 @@ type TrainingData = {
 };
 
 export function useTraining(slug: string) {
-  const [map, setMap] = useSessionStorage<TrainingData>(
-    "trainingQuestions",
-    {},
-  );
+  const [map, setMap] = useLocalStorage<TrainingData>("trainingQuestions", {});
 
   const setCurrent = useCallback(
     (current: number) => {

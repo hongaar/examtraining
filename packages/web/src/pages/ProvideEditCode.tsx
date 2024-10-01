@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { Footer, Header, Main } from "../components";
 
 type Props = {
@@ -10,7 +10,7 @@ export function ProvideEditCode({ returnTo }: Props) {
   console.debug("Rendering page ProvideEditCode");
 
   const [busy, setBusy] = useState(false);
-  const [editCode, setEditCode] = useSessionStorage("editCode", "");
+  const [editCode, setEditCode] = useLocalStorage("editCode", "");
 
   return (
     <>

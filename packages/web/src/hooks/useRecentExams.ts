@@ -1,11 +1,11 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import { useCallback } from "react";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 
 const MAX_RECENT_EXAMS = 5;
 
 export function useRecentExams() {
-  const [recentExams, setRecentExams] = useSessionStorage<ExamWithQuestions[]>(
+  const [recentExams, setRecentExams] = useLocalStorage<ExamWithQuestions[]>(
     "recentExams",
     [],
   );

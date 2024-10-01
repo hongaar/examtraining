@@ -1,6 +1,6 @@
 import { sluggify } from "@examtraining/core";
 import { FormEvent, useCallback, useState } from "react";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress, USE_DUMMY_DATA } from "../../api";
 import { useFunction } from "../../hooks";
@@ -16,8 +16,8 @@ export function NewExamForm() {
   const [slugCheckInProgress, setSlugCheckInProgress] = useState(false);
   const [urlInvalid, setUrlInvalid] = useState<boolean | undefined>(undefined);
   const [, setLocation] = useLocation();
-  const [, , removeAccessCode] = useSessionStorage("accessCode", "");
-  const [, , removeEditCode] = useSessionStorage("editCode", "");
+  const [, , removeAccessCode] = useLocalStorage("accessCode", "");
+  const [, , removeEditCode] = useLocalStorage("editCode", "");
 
   const addExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
