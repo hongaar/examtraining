@@ -23,75 +23,90 @@ export function TrainQuestions({ exam }: Props) {
 
   const question = trainingQuestions[current];
 
-  if (showSplash) {
-    return (
-      <article>
-        <p>That was the last question.</p>
-        <button type="button" onClick={() => setShowSplash(false)}>
-          📊 Show results
-        </button>
-      </article>
-    );
-  }
-
-  if (!question) {
+  if (!showSplash && !question) {
     return <Results exam={exam} />;
   }
 
   return (
-    <form
-      className="training"
-      onSubmit={(event) => {
-        event.preventDefault();
-
-        const form = event.target as HTMLFormElement;
-        const formData = new FormData(form);
-        const answerId = formData.get("answer") as string;
-
-        setAnswer(question.id, answerId);
-        setCurrent(current + 1);
-
-        if (current + 1 === trainingQuestions.length) {
-          setShowSplash(true);
-        }
-      }}
-    >
-      <article>
-        <p>{question.description}</p>
-        <ul>
-          {question.answers.map((answer, index) => (
-            <li key={answer.id}>
-              <label>
-                <input
-                  ref={index === 0 ? (firstAnswerRef as any) : undefined}
-                  type="radio"
-                  name="answer"
-                  value={answer.id}
-                  required
-                  defaultChecked={answers[question.id] === answer.id}
-                />
-                {answer.description}
-              </label>
-            </li>
-          ))}
-        </ul>
-        <footer>
-          <fieldset className="grid">
-            {current > 0 ? (
-              <>
+    <>
+      <progress value={current} max={trainingQuestions.length} />
+      {showSplash ? (
+        <>
+          <article>
+            <p>That was the last question.</p>
+            <footer>
+              <fieldset className="grid">
+                <button type="button" onClick={() => setShowSplash(false)}>
+                  📊 Show results
+                </button>{" "}
                 <button
                   type="button"
                   className="secondary"
-                  onClick={() => setCurrent(current - 1)}
+                  onClick={() => {
+                    setShowSplash(false);
+                    setCurrent(current - 1);
+                  }}
                 >
                   Previous
-                </button>{" "}
-              </>
-            ) : null}
-            <button type="submit">Next</button>
-          </fieldset>
-        </footer>
-      </article>
-    </form>
+                </button>
+              </fieldset>
+            </footer>
+          </article>
+        </>
+      ) : (
+        <form
+          className="training"
+          onSubmit={(event) => {
+            event.preventDefault();
+
+            const form = event.target as HTMLFormElement;
+            const formData = new FormData(form);
+            const answerId = formData.get("answer") as string;
+
+            setAnswer(question.id, answerId);
+            setCurrent(current + 1);
+
+            if (current + 1 === trainingQuestions.length) {
+              setShowSplash(true);
+            }
+          }}
+        >
+          <article>
+            <p>{question.description}</p>
+            <ul>
+              {question.answers.map((answer, index) => (
+                <li key={answer.id}>
+                  <label>
+                    <input
+                      ref={index === 0 ? (firstAnswerRef as any) : undefined}
+                      type="radio"
+                      name="answer"
+                      value={answer.id}
+                      required
+                      defaultChecked={answers[question.id] === answer.id}
+                    />
+                    {answer.description}
+                  </label>
+                </li>
+              ))}
+            </ul>
+            <footer>
+              <fieldset className="grid">
+                <button type="submit">Next</button>{" "}
+                {current > 0 ? (
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => setCurrent(current - 1)}
+                  >
+                    Previous
+                  </button>
+                ) : null}
+              </fieldset>
+            </footer>
+          </article>
+        </form>
+      )}
+    </>
   );
 }
