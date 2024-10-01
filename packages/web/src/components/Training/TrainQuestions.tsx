@@ -36,19 +36,24 @@ export function TrainQuestions({ exam }: Props) {
           <article>
             <p>That was the last question.</p>
             <footer>
-              <fieldset className="grid">
-                <button type="button" onClick={() => setShowSplash(false)}>
-                  📊 Show results
-                </button>{" "}
+              <fieldset
+                className="grid"
+                style={{
+                  gridTemplateColumns: current > 0 ? "8rem 1fr" : "1fr",
+                }}
+              >
                 <button
                   type="button"
-                  className="secondary"
+                  className="secondary outline"
                   onClick={() => {
                     setShowSplash(false);
                     setCurrent(current - 1);
                   }}
                 >
                   Previous
+                </button>
+                <button type="button" onClick={() => setShowSplash(false)}>
+                  📊 Show results
                 </button>
               </fieldset>
             </footer>
@@ -92,17 +97,22 @@ export function TrainQuestions({ exam }: Props) {
               ))}
             </ul>
             <footer>
-              <fieldset className="grid">
-                <button type="submit">Next</button>{" "}
+              <fieldset
+                className="grid"
+                style={{
+                  gridTemplateColumns: current > 0 ? "8rem 1fr" : "1fr",
+                }}
+              >
                 {current > 0 ? (
                   <button
                     type="button"
-                    className="secondary"
+                    className="secondary outline"
                     onClick={() => setCurrent(current - 1)}
                   >
                     Previous
                   </button>
                 ) : null}
+                <button type="submit">Next</button>
               </fieldset>
             </footer>
           </article>

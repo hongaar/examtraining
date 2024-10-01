@@ -98,8 +98,8 @@ export const getExam = onCall<GetExamParams, Promise<GetExamReturn>>(
               .get()
               .then((snapshot) => {
                 const answers = toIdAndRef(snapshot);
-
                 const plainAnswers: PlainDoc<AddId<Answer>>[] = [];
+
                 answers.forEach((answer) => {
                   plainAnswers.push(
                     toPlainObject(answer) as PlainDoc<AddId<Answer>>,
