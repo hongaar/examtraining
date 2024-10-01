@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet";
 import { Toaster } from "react-hot-toast";
 import { Route, Switch } from "wouter";
+import { useAnalytics } from "./hooks";
 import {
   EditExamDetails,
   EditExamQuestions,
@@ -14,6 +15,8 @@ import {
 
 export function App() {
   console.debug("Rendering App");
+
+  useAnalytics();
 
   return (
     <>
