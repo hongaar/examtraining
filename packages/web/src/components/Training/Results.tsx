@@ -73,8 +73,16 @@ export function Results({ exam }: Props) {
                   >
                     {answers[question.id] === answer.id ? (
                       <mark data-tooltip="This was your answer">
-                        {answer.description}
+                        {answer.correct ? (
+                          <ins>{answer.description}</ins>
+                        ) : (
+                          answer.description
+                        )}
                       </mark>
+                    ) : answer.correct ? (
+                      <ins data-tooltip="This is the correct answer">
+                        {answer.description}
+                      </ins>
                     ) : (
                       answer.description
                     )}
