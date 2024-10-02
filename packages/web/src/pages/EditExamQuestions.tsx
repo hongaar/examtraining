@@ -203,7 +203,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                   onClick={() => {
                     setEditQuestion(question);
                     document
-                      .getElementById("edit")
+                      .getElementsByTagName("form")[0]
                       ?.scrollIntoView({ behavior: "smooth" });
                   }}
                 >

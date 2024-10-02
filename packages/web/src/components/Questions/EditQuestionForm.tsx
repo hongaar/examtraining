@@ -47,7 +47,7 @@ export function EditQuestionForm({
   );
 
   return (
-    <form onSubmit={editQuestion} id="edit">
+    <form onSubmit={editQuestion}>
       <article>
         <h3>Edit question</h3>
         <fieldset>
