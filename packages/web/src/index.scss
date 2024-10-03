@@ -210,14 +210,21 @@ input[type="range"] {
 
 // training
 .training {
-  font-size: 1.5em;
+  p {
+    font-size: 1.5em;
+  }
 
   ul {
     padding: 0;
 
     li {
       font-family: "Lora", serif;
+      font-size: 1.2em;
       list-style: none;
+
+      &:not(:last-child) {
+        padding-bottom: 0.5rem;
+      }
     }
   }
 }
