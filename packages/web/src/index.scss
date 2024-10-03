@@ -120,7 +120,13 @@ button.link {
 // homepage
 
 .homepage {
-  padding: var(--pico-spacing) 0;
+  padding-top: var(--pico-spacing);
+  padding-bottom: var(--pico-spacing);
+
+  &.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+  }
 
   &.bg {
     margin-top: 0;
