@@ -23,8 +23,13 @@ export function NewTraining({ params }: { params: { exam: string } }) {
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
   const accessCode = useAccessCode();
   const { exam } = useExam(slug, { accessCode });
-  const { trainingQuestions, current, answers, setTrainingQuestions } =
-    useTraining(slug);
+  const {
+    trainingQuestions,
+    current,
+    answers,
+    setTrainingQuestions,
+    answeredCorrectly,
+  } = useTraining(slug);
   const [, setLocation] = useLocation();
   const logEvent = useLogEvent();
 
@@ -57,12 +62,16 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               const form = event.target as HTMLFormElement;
               const formData = new FormData(form);
               const count = Number(formData.get("questions"));
-              const usePrevious = formData.get("usePrevious") === "on";
+              const includeIncorrect =
+                formData.get("includeIncorrect") === "on";
+              const excludeCorrect = formData.get("excludeCorrect") === "on";
 
               let questions: AddId<QuestionWithAnswers>[] = [];
+              let incorrectQuestions: AddId<QuestionWithAnswers>[] = [];
+              let newQuestions: AddId<QuestionWithAnswers>[] = [];
 
-              if (usePrevious) {
-                const incorrectQuestions = shuffle(
+              if (includeIncorrect) {
+                incorrectQuestions = shuffle(
                   trainingQuestions.filter((question) => {
                     return (
                       question.answers.find((a) => a.correct)?.id !==
@@ -70,21 +79,29 @@ export function NewTraining({ params }: { params: { exam: string } }) {
                     );
                   }),
                 );
-                const newQuestions = shuffle(
-                  exam.questions.filter((question) => {
-                    return !trainingQuestions.some((q) => q.id === question.id);
-                  }),
-                );
-                questions = [...incorrectQuestions, ...newQuestions];
-              } else {
-                questions = shuffle(exam.questions);
               }
 
+              if (excludeCorrect) {
+                // Exclude any question with id included in answeredCorrectly
+                newQuestions = shuffle(
+                  exam.questions.filter((question) => {
+                    return !answeredCorrectly.includes(question.id);
+                  }),
+                );
+              } else {
+                newQuestions = shuffle(exam.questions);
+              }
+
+              // Blend together
+              questions = [...incorrectQuestions, ...newQuestions];
+
+              // Limit questions to count
               questions = questions.slice(0, count);
 
               // Shuffle incorrect questions with newQuestions
               questions = shuffle(questions);
 
+              // Shuffle answers
               setTrainingQuestions(
                 questions.map((question) => ({
                   ...question,
@@ -141,19 +158,24 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             {trainingQuestions.length > 0 && trainingFinished ? (
               <label>
                 <input
-                  name="usePrevious"
+                  name="includeIncorrect"
                   type="checkbox"
                   role="switch"
                   defaultChecked
-                  aria-describedby="usePrevious-helper"
                 />
-                Use results from previous training
-                <small id="usePrevious-helper">
-                  <br />
-                  If enabled, the questions with incorrect answers from your
-                  previous training will be asked again and the questions with
-                  correct answers will be skipped.
-                </small>
+                Include incorrectly answered questions from <i>last</i> training
+              </label>
+            ) : null}
+            {answeredCorrectly.length > 0 ? (
+              <label>
+                <input
+                  name="excludeCorrect"
+                  type="checkbox"
+                  role="switch"
+                  defaultChecked
+                />
+                Exclude correctly answered questions from <i>all</i> previous
+                trainings
               </label>
             ) : null}
             <article>
@@ -168,6 +190,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             <button type="submit">💪 Start training</button>
           </form>
         </article>
+        ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
       </Main>
       <Footer />
     </>

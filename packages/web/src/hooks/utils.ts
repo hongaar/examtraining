@@ -57,6 +57,10 @@ type TrainingData = {
 
 export function useTraining(slug: string) {
   const [map, setMap] = useLocalStorage<TrainingData>("trainingQuestions", {});
+  const [answeredCorrectly, setAnsweredCorrectly] = useLocalStorage<string[]>(
+    "answeredCorrectly",
+    [],
+  );
 
   const setCurrent = useCallback(
     (current: number) => {
@@ -87,6 +91,7 @@ export function useTraining(slug: string) {
 
   const setAnswer = useCallback(
     (questionId: string, answerId: string) => {
+      // Update answer in map of current questions
       setMap((map) => ({
         ...map,
         [slug]: {
@@ -97,8 +102,19 @@ export function useTraining(slug: string) {
           },
         },
       }));
+
+      // Update answeredCorrectly
+      if (
+        !answeredCorrectly.includes(questionId) &&
+        answerId ===
+          map[slug].questions
+            .find((q) => q.id === questionId)
+            ?.answers.find((a) => a.correct)?.id
+      ) {
+        setAnsweredCorrectly([...answeredCorrectly, questionId]);
+      }
     },
-    [setMap, slug],
+    [answeredCorrectly, map, setAnsweredCorrectly, setMap, slug],
   );
 
   return {
@@ -108,5 +124,6 @@ export function useTraining(slug: string) {
     setTrainingQuestions,
     answers: map[slug]?.answers || {},
     setAnswer,
+    answeredCorrectly,
   };
 }
