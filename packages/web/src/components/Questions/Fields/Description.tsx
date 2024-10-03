@@ -46,8 +46,6 @@ function extractQuestionAndAnswers(text: string) {
 
   question = question.trim();
 
-  console.log({ question, answers });
-
   return {
     question,
     answers,
@@ -84,7 +82,7 @@ export function Description({ defaultValue, addAnswers }: Props) {
           const target = event.target as HTMLTextAreaElement;
           const text = event.clipboardData.getData("text/plain");
           if (textAreaRef !== null && textAreaRef.current !== null) {
-            textAreaRef.current.value = parsePastedText(text);
+            textAreaRef.current.value += parsePastedText(text);
           }
 
           if (target.checkValidity()) {
