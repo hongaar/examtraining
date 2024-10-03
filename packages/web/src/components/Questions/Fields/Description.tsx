@@ -19,10 +19,9 @@ function extractQuestionAndAnswers(text: string) {
   let questionPos = -1;
 
   for (let i = 0; i < lines.length; i++) {
-    console.log({ i, line: lines[i], questionPos, question, answers });
     // Check if the first line starts with a number followed by a dot or colon
     if (i === 0) {
-      const match = lines[i].match(/^\d+[.:]\s*(.+)$/);
+      const match = lines[i].match(/^[•-\d]+[.:]?\s*(.+)$/);
       if (match) {
         question = match[1];
         continue;
