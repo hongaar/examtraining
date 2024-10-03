@@ -2,7 +2,12 @@ import { ExamWithQuestions } from "@examtraining/core";
 import { FormEvent, useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
-import { useEditCode, useFunction, useLogEvent } from "../../hooks";
+import {
+  useEditCode,
+  useFlushCachedExam,
+  useFunction,
+  useLogEvent,
+} from "../../hooks";
 import { Description, Private, Threshold, Title } from "./Fields";
 
 type Props = {
@@ -18,6 +23,7 @@ export function EditExamForm({ exam }: Props) {
   const editExamDetails = useFunction(Functions.EditExamDetails);
   const [saving, setSaving] = useState(false);
   const logEvent = useLogEvent();
+  const flush = useFlushCachedExam();
 
   const editExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -44,6 +50,7 @@ export function EditExamForm({ exam }: Props) {
           }),
           "Saving exam details",
         );
+        flush();
         logEvent("edit_exam", { slug });
         setLocation(`/${slug}`);
       } catch (error) {
@@ -53,7 +60,7 @@ export function EditExamForm({ exam }: Props) {
         setSaving(false);
       }
     },
-    [editCode, editExamDetails, logEvent, setLocation, slug],
+    [editCode, editExamDetails, flush, logEvent, setLocation, slug],
   );
 
   return (

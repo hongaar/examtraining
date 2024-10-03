@@ -5,7 +5,7 @@ import { TrainQuestions } from "../components/Training";
 import {
   PermissionDenied,
   useAccessCode,
-  useExam,
+  useCachedExam,
   useTraining,
 } from "../hooks";
 import { NotFound } from "./NotFound";
@@ -16,7 +16,7 @@ export function Training({ params }: { params: { exam: string } }) {
 
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
   const accessCode = useAccessCode();
-  const { exam } = useExam(slug, { accessCode });
+  const { exam } = useCachedExam(slug, { accessCode });
   const { trainingQuestions } = useTraining(slug);
   const [, setLocation] = useLocation();
 

@@ -1,5 +1,5 @@
 import { AddId, QuestionWithAnswers } from "@examtraining/core";
-import { useCallback, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 import { toast } from "react-hot-toast";
 import nl2br from "react-nl2br";
@@ -17,7 +17,8 @@ import {
 import {
   PermissionDenied,
   useEditCode,
-  useExam,
+  useExamDirect,
+  useFlushCachedExam,
   useFunction,
   useLogEvent,
 } from "../hooks";
@@ -37,11 +38,12 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
   const createExamQuestion = useFunction(Functions.CreateExamQuestion);
   const editExamQuestion = useFunction(Functions.EditExamQuestion);
   const removeExamQuestion = useFunction(Functions.RemoveExamQuestion);
-  const { exam, reload } = useExam(slug, { editCode });
+  const { exam, reload } = useExamDirect(slug, { editCode });
   const [editQuestion, setEditQuestion] = useState<
     AddId<QuestionWithAnswers> | undefined
   >();
   const logEvent = useLogEvent();
+  const flush = useFlushCachedExam();
 
   maxQuestionOrder =
     exam instanceof PermissionDenied
@@ -86,6 +88,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           }),
           "Creating exam question",
         );
+        flush();
         logEvent("create_question", { slug });
         reload();
       } catch (error) {
@@ -98,6 +101,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
       createExamQuestion,
       editCode,
       exam,
+      flush,
       logEvent,
       maxQuestionOrder,
       reload,
@@ -126,6 +130,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           }),
           "Updating exam question",
         );
+        flush();
         setEditQuestion(undefined);
         logEvent("edit_question", { slug });
         reload();
@@ -135,7 +140,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [editCode, editExamQuestion, editQuestion, logEvent, reload, slug],
+    [editCode, editExamQuestion, editQuestion, flush, logEvent, reload, slug],
   );
 
   const onRemoveQuestion = useCallback(
@@ -157,6 +162,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         if (editQuestion?.id === questionId) {
           setEditQuestion(undefined);
         }
+        flush();
         logEvent("remove_question", { slug });
         reload();
       } catch (error) {
@@ -165,7 +171,15 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [editCode, editQuestion?.id, logEvent, reload, removeExamQuestion, slug],
+    [
+      editCode,
+      editQuestion?.id,
+      flush,
+      logEvent,
+      reload,
+      removeExamQuestion,
+      slug,
+    ],
   );
 
   if (!editCode || exam instanceof PermissionDenied) {
@@ -201,7 +215,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         <article>
           {exam.questions.length === 0 && <p>No questions yet.</p>}
           {exam.questions.map((question, i) => (
-            <>
+            <Fragment key={i}>
               <details>
                 <summary title={String(i + 1)}>
                   {nl2br(question.description)}
@@ -243,7 +257,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                 </button>
               </details>
               {i !== exam.questions.length - 1 ? <hr /> : null}
-            </>
+            </Fragment>
           ))}
         </article>
         ⬅️ <Link to={`/${slug}`}>Back to exam</Link> &nbsp; ⏩{" "}

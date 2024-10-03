@@ -6,7 +6,7 @@ import { Footer, Header, Loading, Main } from "../components";
 import {
   PermissionDenied,
   useAccessCode,
-  useExam,
+  useCachedExam,
   useRecentExams,
   useTraining,
 } from "../hooks";
@@ -18,7 +18,7 @@ export function Exam({ params }: { params: { exam: string } }) {
 
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
   const accessCode = useAccessCode();
-  const { exam } = useExam(slug, { accessCode });
+  const { exam } = useCachedExam(slug, { accessCode });
   const { addRecentExam } = useRecentExams();
   const { trainingQuestions, current } = useTraining(slug);
 
@@ -28,9 +28,9 @@ export function Exam({ params }: { params: { exam: string } }) {
       exam !== null &&
       exam instanceof PermissionDenied === false
     ) {
-      console.log("ADDING RECENT EXAM", exam);
       addRecentExam(exam);
     }
+    // We don't want to add addRecentExam or we will get an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exam]);
 

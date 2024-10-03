@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { ErrorBoundary } from "./components";
-import { FirebaseProvider } from "./context";
+import { ExamProvider, FirebaseProvider } from "./context";
 import "./index.scss";
 import { Error } from "./pages";
 import reportWebVitals from "./reportWebVitals";
@@ -15,7 +15,9 @@ root.render(
   <React.StrictMode>
     <ErrorBoundary fallback={<Error />}>
       <FirebaseProvider>
-        <App />
+        <ExamProvider>
+          <App />
+        </ExamProvider>
       </FirebaseProvider>
     </ErrorBoundary>
   </React.StrictMode>,

@@ -9,7 +9,8 @@ import { Footer, Header, Loading, Main } from "../components";
 import {
   PermissionDenied,
   useEditCode,
-  useExam,
+  useExamDirect,
+  useFlushCachedExam,
   useFunction,
   useLogEvent,
 } from "../hooks";
@@ -84,8 +85,9 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
   const editCode = useEditCode();
   const [saving, setSaving] = useState(false);
   const createExamQuestion = useFunction(Functions.CreateExamQuestion);
-  const { exam, reload } = useExam(slug, { editCode });
+  const { exam, reload } = useExamDirect(slug, { editCode });
   const logEvent = useLogEvent();
+  const flush = useFlushCachedExam();
 
   const [newQuestions, setNewQuestions] = useState<QuestionWithAnswers[]>([]);
   const [saved, setSaved] = useState<number[]>([]);
@@ -180,6 +182,7 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
                 }
               }
 
+              flush();
               logEvent("bulkcreate_questions", { slug });
               reload();
             }}
