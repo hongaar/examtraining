@@ -1,7 +1,7 @@
 import { sluggify } from "@examtraining/core";
 import { FormEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { Footer, Header, Main } from "../components";
+import { Container, Footer, Header, Jumbotron } from "../components";
 import { useRecentExams } from "../hooks";
 
 export function Homepage() {
@@ -20,38 +20,55 @@ export function Homepage() {
 
   return (
     <>
-      <Header />
-      <Main>
-        <article>
-          <h2>View exam</h2>
-          <form onSubmit={viewExam}>
-            <p>Visit an exam by entering its unique code below:</p>
-            <fieldset role="group">
-              <input type="text" name="slug" placeholder="Unique exam code" />
-              <button type="submit">👁️ View</button>
-            </fieldset>
-          </form>
-        </article>
-        {recentExams.length > 0 && (
-          <article>
-            <h2>Recently viewed exams</h2>
-            <ul>
-              {recentExams.map((exam) => (
-                <li key={exam.id}>
-                  <Link href={`/${exam.id}`}>{exam.title}</Link>
-                </li>
-              ))}
-            </ul>
-          </article>
-        )}
-        <article>
-          <h2>Create exam</h2>
-          <p>Everyone can create a new exam:</p>
-          <Link role="button" href="/new">
-            ✨ New exam
-          </Link>
-        </article>
-      </Main>
+      <Container className="homepage bg" fluid>
+        <Header />
+        <Container>
+          <Jumbotron>
+            {[
+              <>
+                <h2>Be well prepared for your next exam.</h2>
+                <p>Exam training for multiple choice exams.</p>
+                <form onSubmit={viewExam}>
+                  <fieldset role="group">
+                    <input
+                      type="text"
+                      name="slug"
+                      required
+                      defaultValue={recentExams[0]?.title}
+                      placeholder="Exam code"
+                    />
+                    <button type="submit">🧠 Train now</button>
+                  </fieldset>
+                </form>
+              </>,
+              <img
+                src="/undraw_exams_re_4ios.svg"
+                alt="Woman making an exam"
+              />,
+            ]}
+          </Jumbotron>
+        </Container>
+      </Container>
+      <Container className="homepage">
+        <Jumbotron>
+          {[
+            <img
+              src="/undraw_text_field_htlv.svg"
+              alt="Woman filling out a text field"
+            />,
+            <>
+              <h3>Easy management of questions and answers.</h3>
+              <p>
+                Create new exams by copy-pasting questions and answers from
+                existing documents, or start entirely from scratch!
+              </p>
+              <Link role="button" href="/new">
+                ✨ Create exam
+              </Link>
+            </>,
+          ]}
+        </Jumbotron>
+      </Container>
       <Footer />
     </>
   );

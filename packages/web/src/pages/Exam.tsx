@@ -92,7 +92,7 @@ export function Exam({ params }: { params: { exam: string } }) {
               className={trainingQuestions.length > 0 ? "secondary" : ""}
               href={`/${slug}/new-training`}
             >
-              💪 Start new training
+              🧠 New training
             </Link>
           </footer>
         </article>

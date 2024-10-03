@@ -187,7 +187,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               </p>
               <p>Click the button below to start. Good luck! 🍀</p>
             </article>
-            <button type="submit">💪 Start training</button>
+            <button type="submit">🚀 Start training</button>
           </form>
         </article>
         ⬅️ <Link to={`/${slug}`}>Back to exam</Link>

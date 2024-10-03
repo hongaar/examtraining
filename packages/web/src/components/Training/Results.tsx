@@ -100,7 +100,7 @@ export function Results({ exam }: Props) {
         ))}
       </article>
       <Link role="button" href={`/${exam.id}/new-training`}>
-        💪 Start new training
+        🧠 New training
       </Link>{" "}
       or ⬅️ <Link to={`/${exam.id}`}>Back to exam</Link>
     </>

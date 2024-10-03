@@ -32,6 +32,10 @@ export function ProvideEditCode({ returnTo }: Props) {
               window.location.href = returnTo;
             }}
           >
+            <p>
+              If you've just created this exam, please look for the edit code in
+              your mailbox.
+            </p>
             <fieldset role="group">
               <input
                 name="editCode"
@@ -54,7 +58,7 @@ export function ProvideEditCode({ returnTo }: Props) {
                 disabled={busy}
                 aria-busy={busy ? "true" : "false"}
               >
-                👁️ View
+                Edit exam
               </button>
             </fieldset>{" "}
             {!busy && editCode ? (

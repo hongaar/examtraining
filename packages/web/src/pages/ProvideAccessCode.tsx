@@ -32,6 +32,7 @@ export function ProvideAccessCode({ returnTo }: Props) {
               window.location.href = `${returnTo}?accessCode=${accessCode}`;
             }}
           >
+            <p>This exam is private and requires an access code to view it.</p>
             <fieldset role="group">
               <input
                 name="accessCode"
@@ -54,7 +55,7 @@ export function ProvideAccessCode({ returnTo }: Props) {
                 disabled={busy}
                 aria-busy={busy ? "true" : "false"}
               >
-                👁️ View
+                View exam
               </button>
             </fieldset>{" "}
             {accessCode ? (

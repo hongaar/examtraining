@@ -117,6 +117,69 @@ button.link {
   background-color: var(--background-color);
 }
 
+// homepage
+
+.homepage {
+  padding: var(--pico-spacing) 0;
+
+  &.bg {
+    margin-top: 0;
+    background-size: 100% 100%;
+    background-position: 0px 0px;
+    background-image: linear-gradient(90deg, #6cc16aab 0%, #87ebf9ab 100%);
+
+    header h1 a {
+      @media (prefers-color-scheme: dark) {
+        color: var(--pico-primary-inverse) !important;
+      }
+    }
+
+    p {
+      color: var(--pico-h2-color);
+    }
+  }
+}
+
+.jumbotron {
+  padding: calc(var(--pico-spacing) * 2) 0;
+  gap: calc(var(--pico-spacing) * 2);
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+
+  @media (min-width: 1280px) {
+    padding: calc(var(--pico-spacing) * 4) 0;
+    gap: calc(var(--pico-spacing) * 4);
+  }
+
+  div {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+
+    @media (min-width: 1024px) {
+      width: 50%;
+    }
+  }
+
+  h2 {
+    font-size: 3em;
+  }
+
+  h3 {
+    font-size: 2.5em;
+  }
+
+  p {
+    font-size: 1.2em;
+  }
+}
+
 // helpers
 
 small.invalid {
