@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { Link, useLocation } from "wouter";
 import { shuffle } from "../api";
-import { Footer, Header, Loading, Main } from "../components";
+import { Footer, Header, Loading, Main, Range } from "../components";
 import {
   PermissionDenied,
   useAccessCode,
@@ -13,7 +13,7 @@ import {
 import { NotFound } from "./NotFound";
 import { ProvideAccessCode } from "./ProvideAccessCode";
 
-const MAX_QUESTIONS_SUGGESTION = 20;
+const QUESTIONS_SUGGESTION = 20;
 const MAX_QUESTIONS = 50;
 
 export function NewTraining({ params }: { params: { exam: string } }) {
@@ -116,29 +116,24 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               </article>
             ) : null}
             <label>
-              Number of questions
-              <input
+              Choose the number of training questions
+              <Range
                 name="questions"
-                type="range"
                 aria-label="Number of questions"
                 aria-describedby="questions-helper"
                 required
                 min={1}
                 max={Math.min(MAX_QUESTIONS, exam.questions.length)}
                 defaultValue={Math.min(
-                  MAX_QUESTIONS_SUGGESTION,
+                  QUESTIONS_SUGGESTION,
                   exam.questions.length,
                 )}
-                onChange={(event) => {
-                  event.target.setAttribute(
-                    "data-tooltip",
-                    `${event.target.value} question${Number(event.target.value) !== 1 ? "s" : ""}`,
-                  );
-                }}
-                data-tooltip={`${Math.min(MAX_QUESTIONS_SUGGESTION, exam.questions.length)} question${Math.min(MAX_QUESTIONS_SUGGESTION, exam.questions.length) !== 1 ? "s" : ""}`}
               />
               <small id="questions-helper">
-                With you many questions do you want to train?
+                We recommend you choose between 10 and 30 questions. After you
+                finish this training, you can immediately start a next training
+                which will adapt to your results. You can choose a maximum of{" "}
+                {Math.min(MAX_QUESTIONS, exam.questions.length)} questions.
               </small>
             </label>
             {trainingQuestions.length > 0 && trainingFinished ? (
@@ -153,9 +148,9 @@ export function NewTraining({ params }: { params: { exam: string } }) {
                 Use results from previous training
                 <small id="usePrevious-helper">
                   <br />
-                  If enabled, the incorrect answers from your previous training
-                  will be asked again and the correct answers will not be asked
-                  this time.
+                  If enabled, the questions with incorrect answers from your
+                  previous training will be asked again and the questions with
+                  correct answers will be skipped.
                 </small>
               </label>
             ) : null}

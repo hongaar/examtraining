@@ -1,3 +1,4 @@
+export * from "./BulkAddExamQuestions";
 export * from "./EditExamDetails";
 export * from "./EditExamQuestions";
 export * from "./Error";

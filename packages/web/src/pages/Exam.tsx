@@ -60,45 +60,40 @@ export function Exam({ params }: { params: { exam: string } }) {
           <h3>
             {exam.title}
             <span className="badge">
-              {exam.private ? (
-                <>🔒 This exam is private</>
-              ) : (
-                <>🌍 This exam is public</>
-              )}
+              {exam.private ? <>🔒 Private</> : <>🌍 Public</>}
             </span>
             <span className="badge">
-              📅 Created at {exam.created.toLocaleDateString()}
+              📅 Created: {exam.created.toLocaleDateString()}
             </span>
-            <span className="badge">
-              ✅ Threshold to pass: {exam.threshold}%
-            </span>
+            <span className="badge">✅ Pass threshold: {exam.threshold}%</span>
+            <span className="badge">❓ Questions: {exam.questions.length}</span>
           </h3>
-          {exam.description ? <Markdown>{exam.description}</Markdown> : null}
-          {trainingQuestions.length > 0 ? (
-            trainingFinished ? (
-              <>
-                <Link role="button" href={`/${slug}/training`}>
-                  📊 Show results of last training
-                </Link>{" "}
-              </>
-            ) : (
-              <>
-                <Link role="button" href={`/${slug}/training`}>
-                  ↪️ Continue last training
-                </Link>{" "}
-              </>
-            )
-          ) : null}
-          <Link
-            role="button"
-            className={trainingQuestions.length > 0 ? "secondary" : ""}
-            href={`/${slug}/new-training`}
-          >
-            💪 Start new training
-          </Link>
-          <footer>
-            ❓ <Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp; 🖊️{" "}
-            <Link href={`/${slug}/edit`}>Edit details</Link>
+          {exam.description ? <Markdown>{exam.description}</Markdown> : null}❓{" "}
+          <Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp; 🖊️{" "}
+          <Link href={`/${slug}/edit`}>Edit details</Link>
+          <footer className="grid">
+            {trainingQuestions.length > 0 ? (
+              trainingFinished ? (
+                <>
+                  <Link role="button" href={`/${slug}/training`}>
+                    📊 Show results of last training
+                  </Link>{" "}
+                </>
+              ) : (
+                <>
+                  <Link role="button" href={`/${slug}/training`}>
+                    ↪️ Continue last training
+                  </Link>{" "}
+                </>
+              )
+            ) : null}
+            <Link
+              role="button"
+              className={trainingQuestions.length > 0 ? "secondary" : ""}
+              href={`/${slug}/new-training`}
+            >
+              💪 Start new training
+            </Link>
           </footer>
         </article>
       </Main>

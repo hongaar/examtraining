@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { Route, Switch } from "wouter";
 import { useAnalytics } from "./hooks";
 import {
+  BulkAddExamQuestions,
   EditExamDetails,
   EditExamQuestions,
   Exam,
@@ -28,6 +29,7 @@ export function App() {
         <Route path="/:exam/training" component={Training} />
         <Route path="/:exam/edit" component={EditExamDetails} />
         <Route path="/:exam/questions" component={EditExamQuestions} />
+        <Route path="/:exam/bulk" component={BulkAddExamQuestions} />
         <Route path="/:exam" component={Exam} />
         <Route path="/" component={Homepage} />
         <Route component={NotFound} />

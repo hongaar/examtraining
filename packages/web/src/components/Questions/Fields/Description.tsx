@@ -13,15 +13,14 @@ function extractQuestionAndAnswers(text: string) {
   const lines = text
     .trim()
     .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
+    .map((line) => line.trim());
 
-  let questionPos = -1;
+  let currentAnswerIndex = -1;
 
   for (let i = 0; i < lines.length; i++) {
     // Check if the first line starts with a number followed by a dot or colon
     if (i === 0) {
-      const match = lines[i].match(/^[•-\d]+[.:]?\s*(.+)$/);
+      const match = lines[i].match(/^\d+[.:]?\s*(.+)$/);
       if (match) {
         question = match[1];
         continue;
@@ -29,17 +28,17 @@ function extractQuestionAndAnswers(text: string) {
     }
 
     // Check if the line begins a new answer
-    const answerMatch = lines[i].match(/^[a-zA-Z][.:]\s*(.+)$/);
+    const answerMatch = lines[i].match(/^[-•a-zA-Z][.:]?\s+(.+)$/);
     if (answerMatch) {
-      questionPos++;
-      answers[questionPos] = answerMatch[1];
+      currentAnswerIndex++;
+      answers[currentAnswerIndex] = answerMatch[1];
       continue;
     }
 
-    if (questionPos === -1) {
+    if (currentAnswerIndex === -1) {
       question += "\n" + lines[i];
     } else {
-      answers[questionPos] = answers[questionPos] + "\n" + lines[i];
+      answers[currentAnswerIndex] += " " + lines[i];
     }
   }
 
@@ -80,8 +79,15 @@ export function Description({ defaultValue, addAnswers }: Props) {
 
           const target = event.target as HTMLTextAreaElement;
           const text = event.clipboardData.getData("text/plain");
+
           if (textAreaRef !== null && textAreaRef.current !== null) {
-            textAreaRef.current.value += parsePastedText(text);
+            // Clear selected text and replace it with the pasted text
+            const selectionStart = textAreaRef.current.selectionStart;
+            const selectionEnd = textAreaRef.current.selectionEnd;
+            textAreaRef.current.value =
+              textAreaRef.current.value.substring(0, selectionStart) +
+              parsePastedText(text) +
+              textAreaRef.current.value.substring(selectionEnd);
           }
 
           if (target.checkValidity()) {

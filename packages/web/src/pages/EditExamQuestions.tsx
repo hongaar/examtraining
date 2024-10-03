@@ -212,7 +212,13 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                 <button
                   className="inline outline  secondary"
                   onClick={() => {
-                    onRemoveQuestion(question.id);
+                    if (
+                      window.confirm(
+                        "Are you sure you want to remove this question?",
+                      )
+                    ) {
+                      onRemoveQuestion(question.id);
+                    }
                   }}
                 >
                   🗑️ Remove question
@@ -222,7 +228,8 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             </>
           ))}
         </article>
-        ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
+        ⬅️ <Link to={`/${slug}`}>Back to exam</Link> &nbsp; ⏩{" "}
+        <Link to={`/${slug}/bulk`}>Bulk add questions</Link>
       </Main>
       <Footer />
     </>
