@@ -6,7 +6,13 @@ import stringSimilarity from "string-similarity-js";
 import { Link } from "wouter";
 import { Functions, progress } from "../api";
 import { Footer, Header, Loading, Main } from "../components";
-import { PermissionDenied, useEditCode, useExam, useFunction } from "../hooks";
+import {
+  PermissionDenied,
+  useEditCode,
+  useExam,
+  useFunction,
+  useLogEvent,
+} from "../hooks";
 import { NotFound } from "./NotFound";
 import { ProvideEditCode } from "./ProvideEditCode";
 
@@ -45,6 +51,7 @@ function parseRaw(minOrder: number, text: string) {
       questions[currentQuestionIndex].answers[currentAnswerIndex] = {
         description: answerMatch[1],
         correct: lines[i].startsWith("*"),
+        order: currentAnswerIndex + 1,
       } as AddId<Answer>;
       continue;
     }
@@ -78,6 +85,7 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
   const [saving, setSaving] = useState(false);
   const createExamQuestion = useFunction(Functions.CreateExamQuestion);
   const { exam, reload } = useExam(slug, { editCode });
+  const logEvent = useLogEvent();
 
   const [newQuestions, setNewQuestions] = useState<QuestionWithAnswers[]>([]);
   const [saved, setSaved] = useState<number[]>([]);
@@ -95,15 +103,13 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
       }
 
       setSaving(true);
+      console.log("Creating question", question);
       try {
         await progress(
           createExamQuestion({
             slug,
             editCode,
-            data: {
-              ...question,
-              order: maxQuestionOrder + 1,
-            } as QuestionWithAnswers,
+            data: question as QuestionWithAnswers,
           }),
           "Creating exam question",
         );
@@ -114,7 +120,7 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [createExamQuestion, editCode, maxQuestionOrder, slug],
+    [createExamQuestion, editCode, slug],
   );
 
   if (!editCode || exam instanceof PermissionDenied) {
@@ -174,6 +180,7 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
                 }
               }
 
+              logEvent("bulkcreate_questions", { slug });
               reload();
             }}
           >
