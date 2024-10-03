@@ -27,7 +27,7 @@ export function Homepage() {
             {[
               <>
                 <h2>Be well prepared for your next exam.</h2>
-                <p>Exam training for multiple choice exams.</p>
+                <p>Online training for multiple choice exams.</p>
                 <form onSubmit={viewExam}>
                   <fieldset role="group">
                     <input
@@ -60,7 +60,7 @@ export function Homepage() {
               <h3>Easy management of questions and answers.</h3>
               <p>
                 Create new exams by copy-pasting questions and answers from
-                existing documents, or start entirely from scratch!
+                existing documents, or start entirely from scratch.
               </p>
               <Link role="button" href="/new">
                 ✨ Create exam
