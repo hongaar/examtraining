@@ -53,7 +53,7 @@ export function EditExamForm({ exam }: Props) {
         setSaving(false);
       }
     },
-    [editCode, editExamDetails, setLocation, slug],
+    [editCode, editExamDetails, logEvent, setLocation, slug],
   );
 
   return (
