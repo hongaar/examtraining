@@ -72,17 +72,19 @@ export function Results({ exam }: Props) {
                     className={answer.correct ? "correct" : undefined}
                   >
                     {answers[question.id] === answer.id ? (
-                      <mark data-tooltip="This was your answer">
+                      <span data-tooltip="This was your answer">
                         {answer.correct ? (
-                          <ins>{answer.description}</ins>
+                          <mark>
+                            <ins>{answer.description}</ins>
+                          </mark>
                         ) : (
-                          answer.description
+                          <del>{answer.description}</del>
                         )}
-                      </mark>
+                      </span>
                     ) : answer.correct ? (
-                      <ins data-tooltip="This is the correct answer">
-                        {answer.description}
-                      </ins>
+                      <mark data-tooltip="This is the correct answer">
+                        <ins>{answer.description}</ins>
+                      </mark>
                     ) : (
                       answer.description
                     )}
