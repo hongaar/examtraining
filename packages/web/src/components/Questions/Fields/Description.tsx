@@ -44,6 +44,8 @@ function extractQuestionAndAnswers(text: string) {
     }
   }
 
+  question = question.trim();
+
   console.log({ question, answers });
 
   return {
