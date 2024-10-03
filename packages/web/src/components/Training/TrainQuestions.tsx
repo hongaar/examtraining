@@ -1,7 +1,7 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import { useEffect, useRef, useState } from "react";
 import nl2br from "react-nl2br";
-import { useTraining } from "../../hooks";
+import { useLogEvent, useTraining } from "../../hooks";
 import { Results } from "./Results";
 
 type Props = {
@@ -15,6 +15,7 @@ export function TrainQuestions({ exam }: Props) {
     useTraining(exam.id);
   const [showSplash, setShowSplash] = useState(false);
   const firstAnswerRef = useRef();
+  const logEvent = useLogEvent();
 
   useEffect(() => {
     if (firstAnswerRef.current) {
@@ -52,7 +53,13 @@ export function TrainQuestions({ exam }: Props) {
                 >
                   Previous
                 </button>
-                <button type="button" onClick={() => setShowSplash(false)}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    logEvent("finish_training", { slug: exam.id });
+                    setShowSplash(false);
+                  }}
+                >
                   📊 Show results
                 </button>
               </fieldset>

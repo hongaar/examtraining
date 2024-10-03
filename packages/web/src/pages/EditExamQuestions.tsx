@@ -14,7 +14,13 @@ import {
   Main,
   NewQuestionForm,
 } from "../components";
-import { PermissionDenied, useEditCode, useExam, useFunction } from "../hooks";
+import {
+  PermissionDenied,
+  useEditCode,
+  useExam,
+  useFunction,
+  useLogEvent,
+} from "../hooks";
 import { NotFound } from "./NotFound";
 import { ProvideEditCode } from "./ProvideEditCode";
 
@@ -35,6 +41,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
   const [editQuestion, setEditQuestion] = useState<
     AddId<QuestionWithAnswers> | undefined
   >();
+  const logEvent = useLogEvent();
 
   maxQuestionOrder =
     exam instanceof PermissionDenied
@@ -79,6 +86,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           }),
           "Creating exam question",
         );
+        logEvent("create_question", { slug });
         reload();
       } catch (error) {
         console.error(error);
@@ -86,7 +94,15 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [createExamQuestion, editCode, exam, maxQuestionOrder, reload, slug],
+    [
+      createExamQuestion,
+      editCode,
+      exam,
+      logEvent,
+      maxQuestionOrder,
+      reload,
+      slug,
+    ],
   );
 
   const onEditQuestion = useCallback(
@@ -111,6 +127,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           "Updating exam question",
         );
         setEditQuestion(undefined);
+        logEvent("edit_question", { slug });
         reload();
       } catch (error) {
         console.error(error);
@@ -118,7 +135,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [editCode, editExamQuestion, editQuestion, reload, slug],
+    [editCode, editExamQuestion, editQuestion, logEvent, reload, slug],
   );
 
   const onRemoveQuestion = useCallback(
@@ -140,6 +157,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         if (editQuestion?.id === questionId) {
           setEditQuestion(undefined);
         }
+        logEvent("remove_question", { slug });
         reload();
       } catch (error) {
         console.error(error);
@@ -147,7 +165,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         setSaving(false);
       }
     },
-    [editCode, editQuestion?.id, reload, removeExamQuestion, slug],
+    [editCode, editQuestion?.id, logEvent, reload, removeExamQuestion, slug],
   );
 
   if (!editCode || exam instanceof PermissionDenied) {

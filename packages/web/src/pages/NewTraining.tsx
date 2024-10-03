@@ -8,6 +8,7 @@ import {
   PermissionDenied,
   useAccessCode,
   useExam,
+  useLogEvent,
   useTraining,
 } from "../hooks";
 import { NotFound } from "./NotFound";
@@ -25,6 +26,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
   const { trainingQuestions, current, answers, setTrainingQuestions } =
     useTraining(slug);
   const [, setLocation] = useLocation();
+  const logEvent = useLogEvent();
 
   if (exam instanceof PermissionDenied) {
     return <ProvideAccessCode returnTo={`/${slug}`} />;
@@ -95,7 +97,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
                   "You answered all questions. You can start a new training if you want.",
                 );
               }
-
+              logEvent("start_training", { slug });
               setLocation(`/${slug}/training`, { replace: true });
             }}
           >

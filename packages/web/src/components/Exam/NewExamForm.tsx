@@ -3,7 +3,7 @@ import { FormEvent, useCallback, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress, USE_DUMMY_DATA } from "../../api";
-import { useFunction } from "../../hooks";
+import { useFunction, useLogEvent } from "../../hooks";
 import { Description, Email, Private, Threshold, Title, Url } from "./Fields";
 
 export function NewExamForm() {
@@ -18,6 +18,7 @@ export function NewExamForm() {
   const [, setLocation] = useLocation();
   const [, , removeAccessCode] = useLocalStorage("accessCode", "");
   const [, , removeEditCode] = useLocalStorage("editCode", "");
+  const logEvent = useLogEvent();
 
   const addExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -41,6 +42,7 @@ export function NewExamForm() {
           }),
           "Creating exam",
         );
+        logEvent("create_exam", { slug });
         setLocation(`/${slug}`);
       } catch (error) {
         console.error(error);
@@ -48,7 +50,7 @@ export function NewExamForm() {
         setSaving(false);
       }
     },
-    [createExam, removeAccessCode, removeEditCode, setLocation, slug],
+    [createExam, logEvent, removeAccessCode, removeEditCode, setLocation, slug],
   );
 
   return (
