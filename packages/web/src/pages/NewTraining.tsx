@@ -87,7 +87,12 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             let newQuestions: AddId<Question>[] = [];
 
             function categoryFilter(question: AddId<Question>) {
-              return category === "" || question.categories?.includes(category);
+              return (
+                category === "" ||
+                category === null ||
+                typeof category === "undefined" ||
+                question.categories?.includes(category)
+              );
             }
 
             if (includeIncorrect) {

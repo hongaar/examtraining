@@ -1,6 +1,7 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import Markdown from "react-markdown";
 import nl2br from "react-nl2br";
+import { Fragment } from "react/jsx-runtime";
 import { Link } from "wouter";
 import { Jumbotron, Section } from "..";
 import { useTraining } from "../../hooks";
@@ -69,7 +70,7 @@ export function Results({ exam }: Props) {
       <article>
         <h3>Questions</h3>
         {trainingQuestions.map((question, i) => (
-          <>
+          <Fragment key={i}>
             <details
               className={
                 question.answers.find((a) => a.correct)?.id ===
@@ -118,7 +119,7 @@ export function Results({ exam }: Props) {
               ) : null}
             </details>
             {i !== trainingQuestions.length - 1 ? <hr /> : null}
-          </>
+          </Fragment>
         ))}
       </article>
       <Link role="button" href={`/${exam.id}/new-training`}>
