@@ -8,7 +8,7 @@ import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
 import { FirestoreCollection, Question } from "@examtraining/core";
-import { collectionRef, getDocument, migrateAnswersIfNeeded } from "./utils";
+import { collectionRef, getDocument } from "./utils";
 
 type CreateExamQuestionParams = {
   slug: string;
@@ -52,7 +52,7 @@ export const createExamQuestion = onCall<
       );
     }
 
-    await migrateAnswersIfNeeded(exam);
+    // await migrateAnswersIfNeeded(exam);
 
     // Add question
     await collectionRef(
