@@ -7,18 +7,14 @@ try {
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
-import {
-  FirestoreCollection,
-  Question,
-  QuestionWithAnswers,
-} from "@examtraining/core";
-import { collectionRef, getDocument } from "./utils";
+import { FirestoreCollection, Question } from "@examtraining/core";
+import { collectionRef, getDocument, migrateAnswersIfNeeded } from "./utils";
 
 type EditExamQuestionParams = {
   slug: string;
   editCode: string;
   questionId: string;
-  data: QuestionWithAnswers;
+  data: Question;
 };
 
 type EditExamQuestionReturn = {};
@@ -57,6 +53,8 @@ export const editExamQuestion = onCall<
       );
     }
 
+    await migrateAnswersIfNeeded(exam);
+
     // Update question
     const questionRef = collectionRef(
       FirestoreCollection.Exams,
@@ -66,24 +64,9 @@ export const editExamQuestion = onCall<
     await questionRef.update({
       description: data.data.description,
       explanation: data.data.explanation,
+      answers: data.data.answers,
+      categories: data.data.categories,
     } as Question);
-
-    // Remove answers collection
-    const answers = collectionRef(
-      FirestoreCollection.Exams,
-      data.slug,
-      FirestoreCollection.Questions,
-      questionRef.id,
-      FirestoreCollection.Answers,
-    );
-    for (const doc of (await answers.get()).docs) {
-      await doc.ref.delete();
-    }
-
-    // Add answers
-    for (const answer of data.data.answers) {
-      await answers.add(answer);
-    }
 
     logger.info({ message: "edited exam question", data });
 

@@ -7,14 +7,7 @@ try {
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
-import {
-  AddId,
-  Answer,
-  ExamWithQuestions,
-  FirestoreCollection,
-  PlainDoc,
-  QuestionWithAnswers,
-} from "@examtraining/core";
+import { ExamWithQuestions, FirestoreCollection } from "@examtraining/core";
 import { collectionRef, getDocument, toIdAndRef, toPlainObject } from "./utils";
 
 type GetExamParams = { slug: string; accessCode?: string; editCode?: string };
@@ -76,46 +69,9 @@ export const getExam = onCall<GetExamParams, Promise<GetExamReturn>>(
           .get(),
       );
 
-      const plainQuestions: PlainDoc<AddId<QuestionWithAnswers>>[] = [];
-      const promises: Promise<void>[] = [];
-
-      for (const key in questions) {
-        const question = questions[key];
-        const plainQuestion = toPlainObject(
-          question,
-        ) as AddId<QuestionWithAnswers>;
-
-        promises.push(
-          new Promise(async (resolve) => {
-            await collectionRef(
-              FirestoreCollection.Exams,
-              data.slug,
-              FirestoreCollection.Questions,
-              question.id,
-              FirestoreCollection.Answers,
-            )
-              .orderBy("order")
-              .get()
-              .then((snapshot) => {
-                const answers = toIdAndRef(snapshot);
-                const plainAnswers: PlainDoc<AddId<Answer>>[] = [];
-
-                answers.forEach((answer) => {
-                  plainAnswers.push(
-                    toPlainObject(answer) as PlainDoc<AddId<Answer>>,
-                  );
-                });
-
-                plainQuestion.answers = plainAnswers;
-                plainQuestions[key] = plainQuestion;
-              })
-              .then(resolve);
-          }),
-        );
-      }
-
-      await Promise.all(promises);
-
+      const plainQuestions = questions.map((question) =>
+        toPlainObject(question),
+      );
       const plainExam = toPlainObject(exam);
       const examWithQuestions = {
         ...plainExam,

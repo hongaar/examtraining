@@ -1,5 +1,6 @@
 import { ExamWithQuestions } from "@examtraining/core";
 import { FormEvent, useCallback, useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
 import {
@@ -19,6 +20,7 @@ export function EditExamForm({ exam }: Props) {
 
   const slug = exam.id;
   const editCode = useEditCode();
+  const [, setAccessCode] = useLocalStorage("accessCode", "");
   const [, setLocation] = useLocation();
   const editExamDetails = useFunction(Functions.EditExamDetails);
   const [saving, setSaving] = useState(false);
@@ -37,7 +39,7 @@ export function EditExamForm({ exam }: Props) {
 
       setSaving(true);
       try {
-        await progress(
+        const { accessCode } = await progress(
           editExamDetails({
             slug,
             editCode,
@@ -50,6 +52,9 @@ export function EditExamForm({ exam }: Props) {
           }),
           "Saving exam details",
         );
+        if (accessCode) {
+          setAccessCode(accessCode);
+        }
         flush();
         logEvent("edit_exam", { slug });
         setLocation(`/${slug}`);
@@ -60,7 +65,15 @@ export function EditExamForm({ exam }: Props) {
         setSaving(false);
       }
     },
-    [editCode, editExamDetails, flush, logEvent, setLocation, slug],
+    [
+      editCode,
+      editExamDetails,
+      flush,
+      logEvent,
+      setAccessCode,
+      setLocation,
+      slug,
+    ],
   );
 
   return (

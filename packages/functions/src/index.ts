@@ -6,4 +6,5 @@ export * from "./editExamDetails";
 export * from "./editExamQuestion";
 export * from "./getExam";
 export * from "./isSlugAvailable";
+export * from "./onExamDeleted";
 export * from "./removeExamQuestion";

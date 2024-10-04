@@ -1,4 +1,4 @@
-import admin, { firestore } from "firebase-admin";
+import admin from "firebase-admin";
 
 try {
   admin.initializeApp();
@@ -53,12 +53,13 @@ export const removeExamQuestion = onCall<
     }
 
     // Remove question
-    const questionRef = collectionRef(
+    await collectionRef(
       FirestoreCollection.Exams,
       data.slug,
       FirestoreCollection.Questions,
-    ).doc(data.questionId);
-    await firestore().recursiveDelete(questionRef);
+    )
+      .doc(data.questionId)
+      .delete();
 
     logger.info({ message: "removed exam question", data });
 

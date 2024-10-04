@@ -1,15 +1,26 @@
-import { AddId, Answer, QuestionWithAnswers } from "@examtraining/core";
+import { AddId, Answer, Question } from "@examtraining/core";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import short from "short-uuid";
 import { USE_DUMMY_DATA } from "../../api";
-import { Answer as AnswerField, Description, Explanation } from "./Fields";
+import {
+  Answer as AnswerField,
+  Category,
+  Description,
+  Explanation,
+} from "./Fields";
 
 type Props = {
-  onSubmit: (question: Partial<QuestionWithAnswers>) => void;
+  onSubmit: (question: Partial<Question>) => void;
   disabled?: boolean;
+  categories: string[];
 };
 
-export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
+export function NewQuestionForm({
+  onSubmit,
+  categories,
+  disabled = false,
+}: Props) {
   console.debug("Rendering component NewQuestionForm");
 
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -35,6 +46,7 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
         description: (data.get("description") as string).trim(),
         explanation: (data.get("explanation") as string).trim(),
         answers: answers as AddId<Answer>[],
+        categories: data.getAll("categories").filter(Boolean) as string[],
       });
     },
     [answers, onSubmit],
@@ -51,6 +63,7 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
               setAnswers((prev) => [
                 ...prev,
                 ...answers.map((answer, index) => ({
+                  id: short.generate(),
                   order: answers.length + index,
                   description: answer,
                   correct: false,
@@ -98,6 +111,7 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
                 setAnswers((prev) => [
                   ...prev,
                   {
+                    id: short.generate(),
                     order: answers.length + 1,
                     description: answer,
                     correct: false,
@@ -112,6 +126,7 @@ export function NewQuestionForm({ onSubmit, disabled = false }: Props) {
           <Explanation
             defaultValue={USE_DUMMY_DATA ? "Dit is een test" : undefined}
           />
+          <Category options={categories} />
         </fieldset>
         <footer>
           <fieldset className="grid">

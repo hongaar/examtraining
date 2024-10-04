@@ -1,4 +1,4 @@
-import { AddId, QuestionWithAnswers } from "@examtraining/core";
+import { AddId, Question } from "@examtraining/core";
 import { useCallback, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useSearch } from "wouter";
@@ -50,7 +50,7 @@ export function useEditCode() {
 type TrainingData = {
   [key: string]: {
     current: number;
-    questions: AddId<QuestionWithAnswers>[];
+    questions: AddId<Question>[];
     answers: { [questionId: string]: string };
   };
 };
@@ -76,7 +76,7 @@ export function useTraining(slug: string) {
   );
 
   const setTrainingQuestions = useCallback(
-    (questions: AddId<QuestionWithAnswers>[]) => {
+    (questions: AddId<Question>[]) => {
       setMap((map) => ({
         ...map,
         [slug]: {

@@ -1,7 +1,8 @@
-import { AddId, QuestionWithAnswers } from "@examtraining/core";
-import { Fragment, useCallback, useState } from "react";
+import { AddId, Question } from "@examtraining/core";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { toast } from "react-hot-toast";
+import Markdown from "react-markdown";
 import nl2br from "react-nl2br";
 import stringSimilarity from "string-similarity-js";
 import { Link } from "wouter";
@@ -40,7 +41,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
   const removeExamQuestion = useFunction(Functions.RemoveExamQuestion);
   const { exam, reload } = useExamDirect(slug, { editCode });
   const [editQuestion, setEditQuestion] = useState<
-    AddId<QuestionWithAnswers> | undefined
+    AddId<Question> | undefined
   >();
   const logEvent = useLogEvent();
   const flush = useFlushCachedExam();
@@ -51,8 +52,20 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
       : (exam?.questions.reduce((max, q) => Math.max(max, q.order || 0), 0) ??
         0);
 
+  const categories = useMemo(() => {
+    return exam instanceof PermissionDenied
+      ? []
+      : [
+          ...new Set(
+            exam?.questions.reduce((categories, q) => {
+              return [...categories, ...(q.categories || [])];
+            }, [] as string[]),
+          ),
+        ];
+  }, [exam]);
+
   const onNewQuestion = useCallback(
-    async function (question: Partial<QuestionWithAnswers>) {
+    async function (question: Partial<Question>) {
       if (!editCode) {
         throw new Error("Edit code not set.");
       }
@@ -84,7 +97,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             data: {
               ...question,
               order: maxQuestionOrder + 1,
-            } as QuestionWithAnswers,
+            } as Question,
           }),
           "Creating exam question",
         );
@@ -110,7 +123,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
   );
 
   const onEditQuestion = useCallback(
-    async function (question: Partial<QuestionWithAnswers>) {
+    async function (question: Partial<Question>) {
       if (!editCode) {
         throw new Error("Edit code not set.");
       }
@@ -126,7 +139,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             slug,
             editCode,
             questionId: editQuestion.id,
-            data: question as QuestionWithAnswers,
+            data: question as Question,
           }),
           "Updating exam question",
         );
@@ -205,12 +218,17 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           <EditQuestionForm
             key={editQuestion.id}
             question={editQuestion}
+            categories={categories}
             onCancel={() => setEditQuestion(undefined)}
             onSubmit={onEditQuestion}
             disabled={saving}
           />
         ) : (
-          <NewQuestionForm onSubmit={onNewQuestion} disabled={saving} />
+          <NewQuestionForm
+            categories={categories}
+            onSubmit={onNewQuestion}
+            disabled={saving}
+          />
         )}
         <article>
           {exam.questions.length === 0 && <p>No questions yet.</p>}
@@ -218,10 +236,13 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             <Fragment key={i}>
               <details>
                 <summary title={String(i + 1)}>
+                  {question.categories?.map((category) => (
+                    <span className="badge">{category}</span>
+                  ))}
                   {nl2br(question.description)}
                 </summary>
                 <ul>
-                  {question.answers.map((answer) => (
+                  {question.answers?.map((answer) => (
                     <li
                       key={answer.id}
                       className={answer.correct ? "correct" : undefined}
@@ -230,6 +251,9 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                     </li>
                   ))}
                 </ul>
+                {question.explanation ? (
+                  <Markdown>{`_Explanation: ${question.explanation}_`}</Markdown>
+                ) : null}
                 <button
                   className="inline outline"
                   onClick={() => {

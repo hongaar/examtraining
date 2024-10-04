@@ -1,7 +1,8 @@
-import { AddId, Answer, QuestionWithAnswers } from "@examtraining/core";
+import { Question } from "@examtraining/core";
 import { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 import nl2br from "react-nl2br";
+import short from "short-uuid";
 import stringSimilarity from "string-similarity-js";
 import { Link } from "wouter";
 import { Functions, progress } from "../api";
@@ -20,7 +21,7 @@ import { ProvideEditCode } from "./ProvideEditCode";
 const SIMILARITY_THRESHOLD = 0.95;
 
 function parseRaw(minOrder: number, text: string) {
-  const questions: QuestionWithAnswers[] = [];
+  const questions: Question[] = [];
 
   const lines = text
     .trim()
@@ -47,13 +48,14 @@ function parseRaw(minOrder: number, text: string) {
 
     // Check if the line begins a new answer
     const answerMatch = lines[i].match(/^[-*•a-zA-Z][.:]?\s+(.+)$/);
-    if (answerMatch) {
+    if (answerMatch && questions[currentQuestionIndex]) {
       currentAnswerIndex++;
       questions[currentQuestionIndex].answers[currentAnswerIndex] = {
+        id: short.generate(),
         description: answerMatch[1],
         correct: lines[i].startsWith("*"),
         order: currentAnswerIndex + 1,
-      } as AddId<Answer>;
+      };
       continue;
     }
 
@@ -89,7 +91,7 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
   const logEvent = useLogEvent();
   const flush = useFlushCachedExam();
 
-  const [newQuestions, setNewQuestions] = useState<QuestionWithAnswers[]>([]);
+  const [newQuestions, setNewQuestions] = useState<Question[]>([]);
   const [saved, setSaved] = useState<number[]>([]);
 
   maxQuestionOrder =
@@ -99,19 +101,18 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
         0);
 
   const createNewQuestion = useCallback(
-    async function (question: Partial<QuestionWithAnswers>) {
+    async function (question: Partial<Question>) {
       if (!editCode) {
         throw new Error("Edit code not set.");
       }
 
       setSaving(true);
-      console.log("Creating question", question);
       try {
         await progress(
           createExamQuestion({
             slug,
             editCode,
-            data: question as QuestionWithAnswers,
+            data: question as Question,
           }),
           "Creating exam question",
         );
@@ -159,10 +160,10 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
             }}
           />
           <small id="raw-helper">
-            Paste raw exam questions and answers here. Each question should
-            start with a number and on a new line. Each answer should be on a
-            new line and start with a dash (-). The correct answer may be marked
-            with an asterisk (*) at the start of the line.
+            Paste raw exam questions and answers here. Each question should be
+            on a new line and start with a number. Each answer should be on a
+            new line and start with a dash (-), dot (•) or a letter. The correct
+            answer may be marked with an asterisk (*) instead.
           </small>
         </label>
         <article>
@@ -173,8 +174,6 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
               const selectedQuestions = new FormData(
                 event.target as any,
               ).getAll("questions");
-
-              console.log({ selectedQuestions, newQuestions });
 
               for (let i = 0; i < newQuestions.length; i++) {
                 if (selectedQuestions.includes(String(i))) {

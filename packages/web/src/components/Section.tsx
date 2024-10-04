@@ -6,14 +6,14 @@ type Props = {
   className?: string;
 };
 
-export function Container({ children, fluid = false, className }: Props) {
+export function Section({ children, fluid = false, className }: Props) {
   console.debug("Rendering component Section");
 
   return (
-    <div
+    <section
       className={`${fluid ? "container-fluid" : "container"} ${className || ""}`}
     >
       {children}
-    </div>
+    </section>
   );
 }

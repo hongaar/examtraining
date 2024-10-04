@@ -20,6 +20,7 @@ export type Mail = {
 };
 
 export type Answer = {
+  id: string;
   order: number;
   description: string;
   correct: boolean;
@@ -28,12 +29,9 @@ export type Answer = {
 export type Question = {
   order: number;
   description: string;
-  answers: CollectionReference<Answer>;
+  answers: Answer[];
   explanation: string;
-};
-
-export type QuestionWithAnswers = Omit<Question, "answers"> & {
-  answers: AddId<Answer>[];
+  categories?: string[];
 };
 
 export type Secret = {
@@ -54,7 +52,7 @@ export type Exam = {
 
 export type ExamWithQuestions = Omit<Exam, "questions" | "secrets"> & {
   id: string;
-  questions: AddId<QuestionWithAnswers>[];
+  questions: AddId<Question>[];
 };
 
 type DocEnum = {

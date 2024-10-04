@@ -1,24 +1,32 @@
-import { AddId, Answer, QuestionWithAnswers } from "@examtraining/core";
+import { AddId, Answer, Question } from "@examtraining/core";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Answer as AnswerField, Description, Explanation } from "./Fields";
+import short from "short-uuid";
+import {
+  Answer as AnswerField,
+  Category,
+  Description,
+  Explanation,
+} from "./Fields";
 
 type Props = {
-  question: QuestionWithAnswers;
+  question: Question;
   onCancel: () => void;
-  onSubmit: (question: Partial<QuestionWithAnswers>) => void;
+  onSubmit: (question: Partial<Question>) => void;
   disabled?: boolean;
+  categories: string[];
 };
 
 export function EditQuestionForm({
   question,
   onCancel,
+  categories,
   onSubmit,
   disabled = false,
 }: Props) {
   console.debug("Rendering component EditQuestionForm");
 
-  const [answers, setAnswers] = useState<Answer[]>(question.answers);
+  const [answers, setAnswers] = useState<Answer[]>(question.answers || []);
   const lastAnswer = useRef<HTMLInputElement>();
 
   const editQuestion = useCallback(
@@ -41,6 +49,7 @@ export function EditQuestionForm({
         description: (data.get("description") as string).trim(),
         explanation: (data.get("explanation") as string).trim(),
         answers: answers as AddId<Answer>[],
+        categories: data.getAll("categories").filter(Boolean) as string[],
       });
     },
     [answers, onSubmit],
@@ -57,6 +66,7 @@ export function EditQuestionForm({
               setAnswers((prev) => [
                 ...prev,
                 ...answers.map((answer, index) => ({
+                  id: short.generate(),
                   order: answers.length + index,
                   description: answer,
                   correct: false,
@@ -100,6 +110,7 @@ export function EditQuestionForm({
                 setAnswers((prev) => [
                   ...prev,
                   {
+                    id: short.generate(),
                     order: answers.length + 1,
                     description: answer,
                     correct: false,
@@ -112,6 +123,7 @@ export function EditQuestionForm({
             />
           </div>
           <Explanation defaultValue={question.explanation} />
+          <Category options={categories} defaultValue={question.categories} />
         </fieldset>
         <footer>
           <fieldset className="grid">

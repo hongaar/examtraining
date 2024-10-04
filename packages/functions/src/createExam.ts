@@ -21,7 +21,7 @@ const EDIT_HASH_LENGTH = 8;
 const ACCESS_HASH_LENGTH = 2;
 
 type CreateExamParams = { exam: Partial<Exam>; owner: string };
-type CreateExamReturn = {};
+type CreateExamReturn = { accessCode?: string; editCode: string };
 
 export const createExam = onCall<CreateExamParams, Promise<CreateExamReturn>>(
   { region: "europe-west1", cors: "*" },
@@ -66,11 +66,12 @@ export const createExam = onCall<CreateExamParams, Promise<CreateExamReturn>>(
       await exams.doc(slug).set(exam as Exam);
 
       // Queue mail
-      await mail.add({
-        to: owner,
-        message: {
-          subject: "Exam created",
-          html: `Your exam "${exam.title}" has been created.<br/>
+      if (!process.env.FUNCTIONS_EMULATOR) {
+        await mail.add({
+          to: owner,
+          message: {
+            subject: "Exam created",
+            html: `Your exam "${exam.title}" has been created.<br/>
 <br/>
 ${
   exam.private
@@ -84,12 +85,16 @@ Access the exam by using this link: <a href="https://examtraining.online/${slug}
 In order to make changes to this exam, you need an edit code.<br/>
 The edit code is: <code>${editCode}</code><br/>
 Edit the exam by using this link: <a href="https://examtraining.online/${slug}/edit?editCode=${editCode}">https://examtraining.online/${slug}/edit?editCode=${editCode}</a>`,
-        },
-      });
+          },
+        });
+      }
 
       logger.info({ message: "created exam", data });
 
-      return {};
+      return {
+        accessCode,
+        editCode,
+      };
     } catch (error) {
       logger.error(error);
       throw error;

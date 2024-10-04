@@ -16,7 +16,7 @@ type EditExamDetailsParams = {
   data: Partial<Exam>;
 };
 
-type EditExamDetailsReturn = {};
+type EditExamDetailsReturn = { accessCode?: string };
 
 export const editExamDetails = onCall<
   EditExamDetailsParams,
@@ -58,19 +58,21 @@ export const editExamDetails = onCall<
     await docRef(FirestoreCollection.Exams, data.slug).update(data.data);
 
     // Queue mail
-    if (exam.private === false && data.data.private === true) {
-      await mail.add({
-        to: secrets.data()!.owner,
-        message: {
-          subject: "Exam made private",
-          html: `Your exam "${exam.title}" is now private.<br/>
+    if (!process.env.FUNCTIONS_EMULATOR) {
+      if (exam.private === false && data.data.private === true) {
+        await mail.add({
+          to: secrets.data()!.owner,
+          message: {
+            subject: "Exam made private",
+            html: `Your exam "${exam.title}" is now private.<br/>
 <br/>
 In order to view it you need an access code.<br/>
 The access code is: <code>${secrets.data()!.accessCode}</code><br/>
 Access the exam by using this link: <a href="https://examtraining.online/${data.slug}?accessCode=${secrets.data()!.accessCode}">https://examtraining.online/${data.slug}?accessCode=${secrets.data()!.accessCode}</a><br/>
 <br/>`,
-        },
-      });
+          },
+        });
+      }
     }
 
     logger.info({ message: "edited exam details", data });

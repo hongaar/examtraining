@@ -1,7 +1,7 @@
 import { sluggify } from "@examtraining/core";
 import { FormEvent } from "react";
 import { Link, useLocation } from "wouter";
-import { Container, Footer, Header, Jumbotron } from "../components";
+import { Footer, Header, Jumbotron, Section } from "../components";
 import { useRecentExams } from "../hooks";
 
 export function Homepage() {
@@ -20,10 +20,10 @@ export function Homepage() {
 
   return (
     <>
-      <Container className="homepage bg" fluid>
+      <Section className="homepage bg" fluid>
         <Header />
-        <Container>
-          <Jumbotron>
+        <Section>
+          <Jumbotron className="large">
             {[
               <>
                 <h2>Be well prepared for your next exam.</h2>
@@ -47,10 +47,10 @@ export function Homepage() {
               />,
             ]}
           </Jumbotron>
-        </Container>
-      </Container>
-      <Container className="homepage">
-        <Jumbotron>
+        </Section>
+      </Section>
+      <Section className="homepage">
+        <Jumbotron className="large">
           {[
             <img
               src="/undraw_text_field_htlv.svg"
@@ -68,7 +68,65 @@ export function Homepage() {
             </>,
           ]}
         </Jumbotron>
-      </Container>
+      </Section>
+      <Section className="homepage bg round">
+        <Jumbotron className="large">
+          {[
+            <>
+              <h3>Free and simple.</h3>
+              <p>Only the features you need, none of the complexity.</p>
+              <div className="grid">
+                <div>
+                  <h4>
+                    🔁 <u>Learn from mistakes</u>
+                  </h4>
+                  Repeat questions you answered incorrectly until you get them
+                  right.
+                </div>
+                <div>
+                  <h4>
+                    ✅ <u>Pass threshold</u>
+                  </h4>
+                  Provides training feedback on whether you would have passed
+                  the exam.
+                </div>
+              </div>
+              <div className="grid">
+                <div>
+                  <h4>
+                    🔒 <u>Private exams</u>
+                  </h4>
+                  Protect exams with a secret access code and share only with
+                  your students.
+                </div>
+                <div>
+                  <h4>
+                    🏷️ <u>Question categories</u>
+                  </h4>
+                  Assign categories to questions and use them to selectively
+                  train a group of questions.
+                </div>
+              </div>{" "}
+              <div className="grid">
+                <div>
+                  <h4>
+                    🪬 <u>Privacy friendly</u>
+                  </h4>
+                  We don't store any students personal data. Training results
+                  are not stored on our servers.
+                </div>
+                <div>
+                  <h4>
+                    📥 <u>Bulk import</u>
+                  </h4>
+                  Mass create questions and answers by copy-pasting from
+                  existing documents.
+                </div>
+              </div>
+            </>,
+          ]}
+        </Jumbotron>
+      </Section>
       <Footer />
     </>
   );

@@ -3,7 +3,7 @@ import { FormEvent, useCallback, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress, USE_DUMMY_DATA } from "../../api";
-import { useFunction, useLogEvent } from "../../hooks";
+import { useFlushCachedExam, useFunction, useLogEvent } from "../../hooks";
 import { Description, Email, Private, Threshold, Title, Url } from "./Fields";
 
 export function NewExamForm() {
@@ -16,9 +16,10 @@ export function NewExamForm() {
   const [slugCheckInProgress, setSlugCheckInProgress] = useState(false);
   const [urlInvalid, setUrlInvalid] = useState<boolean | undefined>(undefined);
   const [, setLocation] = useLocation();
-  const [, , removeAccessCode] = useLocalStorage("accessCode", "");
-  const [, , removeEditCode] = useLocalStorage("editCode", "");
+  const [, setAccessCode, removeAccessCode] = useLocalStorage("accessCode", "");
+  const [, setEditCode, removeEditCode] = useLocalStorage("editCode", "");
   const logEvent = useLogEvent();
+  const flush = useFlushCachedExam();
 
   const addExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -30,7 +31,7 @@ export function NewExamForm() {
       removeAccessCode();
       removeEditCode();
       try {
-        await progress(
+        const { accessCode, editCode } = await progress(
           createExam({
             exam: {
               title: data.get("title") as string,
@@ -42,6 +43,11 @@ export function NewExamForm() {
           }),
           "Creating exam",
         );
+        if (accessCode) {
+          setAccessCode(accessCode);
+        }
+        setEditCode(editCode);
+        flush();
         logEvent("create_exam", { slug });
         setLocation(`/${slug}`);
       } catch (error) {
@@ -50,7 +56,17 @@ export function NewExamForm() {
         setSaving(false);
       }
     },
-    [createExam, logEvent, removeAccessCode, removeEditCode, setLocation, slug],
+    [
+      createExam,
+      flush,
+      logEvent,
+      removeAccessCode,
+      removeEditCode,
+      setAccessCode,
+      setEditCode,
+      setLocation,
+      slug,
+    ],
   );
 
   return (

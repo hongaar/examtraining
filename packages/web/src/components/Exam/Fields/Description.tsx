@@ -20,7 +20,7 @@ export function Description({ defaultValue, onChange }: Props) {
         onChange={onChange}
       />
       <small id="title-helper">
-        A longer description of the exam. This is optional. You can use{" "}
+        Optional. A longer description of the exam. You can use{" "}
         <a
           href="https://www.markdownguide.org/basic-syntax/"
           target="_blank"

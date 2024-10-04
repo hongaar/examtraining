@@ -25,8 +25,8 @@ export function Explanation({ defaultValue }: Props) {
         }}
       />
       <small id="explanation-helper">
-        This will be shown after a question has been answered. This is optional.
-        You can use{" "}
+        Optional. This will be shown after a question has been answered. You can
+        use{" "}
         <a
           href="https://www.markdownguide.org/basic-syntax/"
           target="_blank"

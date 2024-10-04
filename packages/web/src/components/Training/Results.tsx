@@ -2,6 +2,7 @@ import { ExamWithQuestions } from "@examtraining/core";
 import Markdown from "react-markdown";
 import nl2br from "react-nl2br";
 import { Link } from "wouter";
+import { Jumbotron, Section } from "..";
 import { useTraining } from "../../hooks";
 
 type Props = {
@@ -30,20 +31,41 @@ export function Results({ exam }: Props) {
 
   return (
     <>
-      <article>
-        <h3>Results</h3>
-        <p>
-          {passed
-            ? "🎉 Congratulations! You passed the exam."
-            : "😳 Sorry, you didn't pass the exam."}
-        </p>
-        <p>
-          You scored {totalCorrect} out of {trainingQuestions.length} questions,
-          which equals to {percentageCorrect}%.
-          <br />
-          You needed to score at least {threshold}% to pass the exam.
-        </p>
-      </article>
+      {passed ? (
+        <Section className="bg round">
+          <Jumbotron>
+            {[
+              <>
+                <h3>Congratulations! You passed the exam.</h3>
+                <p>
+                  You scored {totalCorrect} out of {trainingQuestions.length}{" "}
+                  questions, which equals to {percentageCorrect}%.
+                  <br />
+                  You needed to score at least {threshold}% to pass the exam.
+                </p>
+              </>,
+              <img src="/undraw_winners_re_wr1l.svg" alt="Winners" />,
+            ]}
+          </Jumbotron>
+        </Section>
+      ) : (
+        <Section className="bg round">
+          <Jumbotron>
+            {[
+              <>
+                <h3>Sorry, you didn't pass the exam.</h3>
+                <p>
+                  You scored {totalCorrect} out of {trainingQuestions.length}{" "}
+                  questions, which equals to {percentageCorrect}%.
+                  <br />
+                  You needed to score at least {threshold}% to pass the exam.
+                </p>
+              </>,
+              <img src="/undraw_heartbroken_cble.svg" alt="Winners" />,
+            ]}
+          </Jumbotron>
+        </Section>
+      )}
       <article>
         <h3>Questions</h3>
         {trainingQuestions.map((question, i) => (

@@ -7,17 +7,13 @@ try {
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
-import {
-  FirestoreCollection,
-  Question,
-  QuestionWithAnswers,
-} from "@examtraining/core";
-import { collectionRef, getDocument } from "./utils";
+import { FirestoreCollection, Question } from "@examtraining/core";
+import { collectionRef, getDocument, migrateAnswersIfNeeded } from "./utils";
 
 type CreateExamQuestionParams = {
   slug: string;
   editCode: string;
-  data: QuestionWithAnswers;
+  data: Question;
 };
 
 type CreateExamQuestionReturn = {};
@@ -56,8 +52,10 @@ export const createExamQuestion = onCall<
       );
     }
 
+    await migrateAnswersIfNeeded(exam);
+
     // Add question
-    const questionRef = await collectionRef(
+    await collectionRef(
       FirestoreCollection.Exams,
       data.slug,
       FirestoreCollection.Questions,
@@ -65,20 +63,9 @@ export const createExamQuestion = onCall<
       order: data.data.order,
       description: data.data.description,
       explanation: data.data.explanation,
+      answers: data.data.answers,
+      categories: data.data.categories,
     } as Question);
-
-    // Add answers
-    const answers = collectionRef(
-      FirestoreCollection.Exams,
-      data.slug,
-      FirestoreCollection.Questions,
-      questionRef.id,
-      FirestoreCollection.Answers,
-    );
-
-    for (const answer of data.data.answers) {
-      await answers.add(answer);
-    }
 
     logger.info({ message: "created exam question", data });
 

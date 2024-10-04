@@ -78,6 +78,7 @@ export function TrainQuestions({ exam }: Props) {
 
             setAnswer(question.id, answerId);
             setCurrent(current + 1);
+            logEvent("answer_question", { slug: exam.id });
 
             if (current + 1 === trainingQuestions.length) {
               setShowSplash(true);

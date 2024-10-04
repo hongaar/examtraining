@@ -1,4 +1,5 @@
-import { AddId, QuestionWithAnswers } from "@examtraining/core";
+import { AddId, Question } from "@examtraining/core";
+import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { Link, useLocation } from "wouter";
@@ -9,6 +10,7 @@ import {
   useAccessCode,
   useCachedExam,
   useLogEvent,
+  usePreferences,
   useTraining,
 } from "../hooks";
 import { NotFound } from "./NotFound";
@@ -32,6 +34,19 @@ export function NewTraining({ params }: { params: { exam: string } }) {
   } = useTraining(slug);
   const [, setLocation] = useLocation();
   const logEvent = useLogEvent();
+  const { preferences, setPreference } = usePreferences();
+
+  const categories = useMemo(() => {
+    return exam instanceof PermissionDenied
+      ? []
+      : [
+          ...new Set(
+            exam?.questions.reduce((categories, q) => {
+              return [...categories, ...(q.categories || [])];
+            }, [] as string[]),
+          ),
+        ];
+  }, [exam]);
 
   if (exam instanceof PermissionDenied) {
     return <ProvideAccessCode returnTo={`/${slug}`} />;
@@ -55,69 +70,81 @@ export function NewTraining({ params }: { params: { exam: string } }) {
       </Helmet>
       <Header>Exam training</Header>
       <Main>
-        <article>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              const form = event.target as HTMLFormElement;
-              const formData = new FormData(form);
-              const count = Number(formData.get("questions"));
-              const includeIncorrect =
-                formData.get("includeIncorrect") === "on";
-              const excludeCorrect = formData.get("excludeCorrect") === "on";
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = event.target as HTMLFormElement;
+            const formData = new FormData(form);
+            const questionsCount = Number(formData.get("questionsCount"));
+            const includeIncorrect = formData.get("includeIncorrect") === "on";
+            const excludeCorrect = formData.get("excludeCorrect") === "on";
+            const category = formData.get("category") as string;
 
-              let questions: AddId<QuestionWithAnswers>[] = [];
-              let incorrectQuestions: AddId<QuestionWithAnswers>[] = [];
-              let newQuestions: AddId<QuestionWithAnswers>[] = [];
+            setPreference("questionsCount", questionsCount);
 
-              if (includeIncorrect) {
-                incorrectQuestions = shuffle(
-                  trainingQuestions.filter((question) => {
-                    return (
-                      question.answers.find((a) => a.correct)?.id !==
-                      answers[question.id]
-                    );
-                  }),
-                );
-              }
+            let questions: AddId<Question>[] = [];
+            let incorrectQuestions: AddId<Question>[] = [];
+            let newQuestions: AddId<Question>[] = [];
 
-              if (excludeCorrect) {
-                // Exclude any question with id included in answeredCorrectly
-                newQuestions = shuffle(
-                  exam.questions.filter((question) => {
-                    return !answeredCorrectly.includes(question.id);
-                  }),
-                );
-              } else {
-                newQuestions = shuffle(exam.questions);
-              }
+            function categoryFilter(question: AddId<Question>) {
+              return category === "" || question.categories?.includes(category);
+            }
 
-              // Blend together
-              questions = [...incorrectQuestions, ...newQuestions];
-
-              // Limit questions to count
-              questions = questions.slice(0, count);
-
-              // Shuffle incorrect questions with newQuestions
-              questions = shuffle(questions);
-
-              // Shuffle answers
-              setTrainingQuestions(
-                questions.map((question) => ({
-                  ...question,
-                  answers: shuffle(question.answers),
-                })),
+            if (includeIncorrect) {
+              incorrectQuestions = shuffle(
+                trainingQuestions.filter((question) => {
+                  return (
+                    question.answers.find((a) => a.correct)?.id !==
+                    answers[question.id]
+                  );
+                }),
               );
+            }
 
-              if (questions.length === 0) {
-                toast.success(
-                  "You answered all questions. You can start a new training if you want.",
-                );
-              }
-              logEvent("start_training", { slug });
-              setLocation(`/${slug}/training`, { replace: true });
-            }}
-          >
+            if (excludeCorrect) {
+              // Exclude any question with id included in answeredCorrectly
+              newQuestions = shuffle(
+                exam.questions.filter(categoryFilter).filter((question) => {
+                  return !answeredCorrectly.includes(question.id);
+                }),
+              );
+            } else {
+              newQuestions = shuffle(exam.questions.filter(categoryFilter));
+            }
+
+            // Dedupe newQuestions
+            newQuestions = newQuestions.filter(
+              (question) =>
+                !incorrectQuestions.some((q) => q.id === question.id),
+            );
+
+            // Blend together
+            questions = [...incorrectQuestions, ...newQuestions];
+
+            // Limit questions to count
+            questions = questions.slice(0, questionsCount);
+
+            // Shuffle incorrect questions with newQuestions
+            questions = shuffle(questions);
+
+            // Shuffle answers
+            setTrainingQuestions(
+              questions.map((question) => ({
+                ...question,
+                answers: shuffle(question.answers),
+              })),
+            );
+
+            if (questions.length === 0) {
+              toast.success(
+                "You answered all questions. You can start a new training if you want.",
+              );
+            }
+            logEvent("start_training", { slug });
+            setLocation(`/${slug}/training`, { replace: true });
+          }}
+        >
+          <article>
             <h3>{exam.title}</h3>
             {trainingQuestions.length > 0 && !trainingFinished ? (
               <article>
@@ -137,24 +164,39 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             <label>
               Choose the number of training questions
               <Range
-                name="questions"
+                name="questionsCount"
                 aria-label="Number of questions"
-                aria-describedby="questions-helper"
+                aria-describedby="questionsCount-helper"
                 required
                 min={1}
                 max={Math.min(MAX_QUESTIONS, exam.questions.length)}
-                defaultValue={Math.min(
-                  QUESTIONS_SUGGESTION,
-                  exam.questions.length,
-                )}
+                defaultValue={
+                  preferences?.questionsCount ||
+                  Math.min(QUESTIONS_SUGGESTION, exam.questions.length)
+                }
               />
-              <small id="questions-helper">
+              <small id="questionsCount-helper">
                 We recommend you choose between 10 and 30 questions. After you
                 finish this training, you can immediately start a next training
                 which will adapt to your results. You can choose a maximum of{" "}
                 {Math.min(MAX_QUESTIONS, exam.questions.length)} questions.
               </small>
             </label>
+            {categories.length > 0 ? (
+              <label>
+                Choose training category
+                <select name="category" aria-label="Select a training category">
+                  <option selected value="">
+                    All categories
+                  </option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
             {trainingQuestions.length > 0 && trainingFinished ? (
               <label>
                 <input
@@ -187,9 +229,11 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               </p>
               <p>Click the button below to start. Good luck! 🍀</p>
             </article>
-            <button type="submit">🚀 Start training</button>
-          </form>
-        </article>
+            <footer>
+              <button type="submit">🚀 Start training</button>
+            </footer>
+          </article>
+        </form>
         ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
       </Main>
       <Footer />
