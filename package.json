@@ -17,6 +17,7 @@
     "start:emulator": "firebase emulators:start",
     "build": "yarn workspaces foreach --all --topological --verbose run build",
     "build:watch": "yarn workspaces foreach --all --parallel --interlaced run build:watch",
+    "pack": "./pack.sh",
     "format": "prettier --write --ignore-unknown .",
     "format:check": "prettier --check --ignore-unknown .",
     "postinstall": "husky install"
