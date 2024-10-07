@@ -144,8 +144,13 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               toast.success(
                 "You answered all questions. You can start a new training if you want.",
               );
+              return;
             }
-            logEvent("start_training", { slug });
+
+            logEvent("start_training", {
+              slug,
+              questions_count: questions.length,
+            });
             setLocation(`/${slug}/training`, { replace: true });
           }}
         >
