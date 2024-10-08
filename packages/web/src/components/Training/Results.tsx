@@ -193,6 +193,7 @@ export function Results({ exam }: Props) {
               ) : (
                 <button
                   className="inline outline"
+                  data-tooltip="Explanation might not be 100% accurate."
                   onClick={() => {
                     explainQuestion(question.id);
                   }}

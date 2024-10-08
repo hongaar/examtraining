@@ -36,9 +36,14 @@ paragraph and focus on the context and reasoning.
 - Use references to authoritative sources where possible.
 - Avoid repeating the question or answer itself.`;
 
-function generatePrompt(question: string, correctAnswer: string) {
-  return `Explain why "${correctAnswer}" is the correct answer to the question \
-"${question}". Explain in the language of the question.`;
+function generatePrompt(
+  question: string,
+  correctAnswer: string,
+  incorrectAnswers: string[],
+) {
+  return `Explain why "${correctAnswer}" is the correct answer instead of \
+${incorrectAnswers.join(" or ")} to the question "${question}". Explain in the \
+language of the question.`;
 }
 
 function getOpenAIClient() {
@@ -154,8 +159,14 @@ export const explainQuestion = onCall<
         return null;
       }
 
+      const incorrectAnswers = question.answers.filter((a) => !a.correct);
+
       const explanation = await generateCompletion(
-        generatePrompt(question.description, correctAnswer.description),
+        generatePrompt(
+          question.description,
+          correctAnswer.description,
+          incorrectAnswers.map((a) => a.description),
+        ),
       );
 
       return {
