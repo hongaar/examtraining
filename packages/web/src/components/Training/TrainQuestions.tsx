@@ -23,6 +23,10 @@ export function TrainQuestions({ exam }: Props) {
     }
   });
 
+  useEffect(() => {
+    document.getElementById("root")?.scrollIntoView({ behavior: "smooth" });
+  }, [current]);
+
   const question = trainingQuestions[current];
 
   if (!showSplash && !question) {

@@ -1,10 +1,12 @@
 import { ExamWithQuestions } from "@examtraining/core";
+import { ReactNode, useCallback, useState } from "react";
 import Markdown from "react-markdown";
 import nl2br from "react-nl2br";
 import { Fragment } from "react/jsx-runtime";
 import { Link } from "wouter";
 import { Jumbotron, Section } from "..";
-import { useTraining } from "../../hooks";
+import { Functions } from "../../api";
+import { useFunction, useLogEvent, useTraining } from "../../hooks";
 
 type Props = {
   exam: ExamWithQuestions;
@@ -14,6 +16,56 @@ export function Results({ exam }: Props) {
   console.debug("Rendering component Results");
 
   const { trainingQuestions, answers } = useTraining(exam.id);
+  const explain = useFunction(Functions.ExplainQuestion);
+  const logEvent = useLogEvent();
+  const [explanations, setExplanations] = useState<Record<string, ReactNode>>(
+    {},
+  );
+
+  const explainQuestion = useCallback(
+    async (questionId: string) => {
+      if (explanations[questionId]) {
+        return;
+      }
+
+      setExplanations((explanations) => ({
+        ...explanations,
+        [questionId]: <span aria-busy="true">Loading explanation...</span>,
+      }));
+
+      logEvent("explain_question", {
+        slug: exam.id,
+        question_id: questionId,
+      });
+
+      try {
+        const result = await explain({ slug: exam.id, questionId });
+
+        if (!result) {
+          setExplanations((explanations) => ({
+            ...explanations,
+            [questionId]:
+              "❌ Could not retrieve explanation from ChatGPT, please try again later.",
+          }));
+          return;
+        }
+
+        setExplanations((explanations) => ({
+          ...explanations,
+          [questionId]: result.explanation,
+        }));
+      } catch (error) {
+        console.error(error);
+        setExplanations((explanations) => ({
+          ...explanations,
+          [questionId]:
+            "❌ Could not retrieve explanation from ChatGPT, please try again later.",
+        }));
+        return;
+      }
+    },
+    [exam.id, explain, explanations, logEvent],
+  );
 
   const totalCorrect = trainingQuestions.reduce((total, question, index) => {
     const answer = answers[question.id];
@@ -115,8 +167,38 @@ export function Results({ exam }: Props) {
                 ))}
               </ul>
               {question.explanation ? (
-                <Markdown>{`_Explanation: ${question.explanation}_`}</Markdown>
+                <Markdown>{`_**Explanation:**  \n${question.explanation}_`}</Markdown>
               ) : null}
+              {explanations[question.id] ? (
+                <p>
+                  <i>
+                    <b>
+                      <img
+                        src="/openai.svg"
+                        style={{ height: "1em", verticalAlign: "middle" }}
+                        alt="OpenAI logo"
+                      />{" "}
+                      ChatGPT:
+                    </b>
+                    <br />
+                    {explanations[question.id]}
+                  </i>
+                </p>
+              ) : (
+                <button
+                  className="inline outline"
+                  onClick={() => {
+                    explainQuestion(question.id);
+                  }}
+                >
+                  <img
+                    src="/openai.svg"
+                    style={{ height: "1em", verticalAlign: "middle" }}
+                    alt="OpenAI logo"
+                  />{" "}
+                  Explain with ChatGPT
+                </button>
+              )}
             </details>
             {i !== trainingQuestions.length - 1 ? <hr /> : null}
           </Fragment>

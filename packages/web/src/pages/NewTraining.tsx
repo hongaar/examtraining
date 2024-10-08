@@ -181,8 +181,12 @@ export function NewTraining({ params }: { params: { exam: string } }) {
                 min={1}
                 max={Math.min(MAX_QUESTIONS, exam.questions.length)}
                 defaultValue={
-                  preferences?.questionsCount ||
-                  Math.min(QUESTIONS_SUGGESTION, exam.questions.length)
+                  preferences?.questionsCount
+                    ? Math.min(
+                        preferences?.questionsCount,
+                        exam.questions.length,
+                      )
+                    : Math.min(QUESTIONS_SUGGESTION, exam.questions.length)
                 }
               />
               <small id="questionsCount-helper">

@@ -4,6 +4,7 @@ import type {
   createExamQuestion,
   editExamDetails,
   editExamQuestion,
+  explainQuestion,
   getExam,
   isSlugAvailable,
   removeExamQuestion,
@@ -17,6 +18,7 @@ export enum Functions {
   CreateExamQuestion = "createExamQuestion",
   EditExamQuestion = "editExamQuestion",
   RemoveExamQuestion = "removeExamQuestion",
+  ExplainQuestion = "explainQuestion",
 }
 
 export type FunctionTypes = {
@@ -27,6 +29,7 @@ export type FunctionTypes = {
   [Functions.CreateExamQuestion]: typeof createExamQuestion;
   [Functions.EditExamQuestion]: typeof editExamQuestion;
   [Functions.RemoveExamQuestion]: typeof removeExamQuestion;
+  [Functions.ExplainQuestion]: typeof explainQuestion;
 };
 
 export type FunctionParams<Function> =

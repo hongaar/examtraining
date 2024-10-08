@@ -25,7 +25,7 @@ export function FirebaseProvider({ children }: Props) {
   }, []);
 
   if (!value) {
-    return <Loading>Loading examtraining.online</Loading>;
+    return <Loading>Loading examtraining.online...</Loading>;
   }
 
   return (
