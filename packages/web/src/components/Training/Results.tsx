@@ -172,7 +172,7 @@ export function Results({ exam }: Props) {
               {explanations[question.id] ? (
                 <p>
                   <i>
-                    <b>
+                    <b data-tooltip="Explanation might not be 100% accurate.">
                       <img
                         src="/openai.svg"
                         style={{ height: "1em", verticalAlign: "middle" }}
