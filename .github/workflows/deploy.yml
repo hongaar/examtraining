@@ -19,7 +19,7 @@ jobs:
           # gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXAMTRAINING_C20CD }}
       - run: yarn
       - run: yarn build
-      - run: yarn pack
+      - run: yarn pack-core
       - run: firebase login:list
       - run: firebase deploy --only hosting
       - run: firebase deploy --only functions
