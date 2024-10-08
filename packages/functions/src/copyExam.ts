@@ -15,18 +15,36 @@ import {
 } from "@examtraining/core";
 import { DocumentReference } from "firebase-admin/firestore";
 import * as crypto from "node:crypto";
-import { ACCESS_HASH_LENGTH, collectionRef, EDIT_HASH_LENGTH } from "./utils";
+import {
+  ACCESS_HASH_LENGTH,
+  collectionRef,
+  EDIT_HASH_LENGTH,
+  getDocument,
+} from "./utils";
 
-type CreateExamParams = { exam: Partial<Exam>; owner: string };
-type CreateExamReturn = { accessCode?: string; editCode: string };
+type CopyExamParams = {
+  slug: string;
+  editCode: string;
+  exam: Partial<Exam>;
+  owner: string;
+};
+type CopyExamReturn = { accessCode?: string; editCode: string };
 
-export const createExam = onCall<CreateExamParams, Promise<CreateExamReturn>>(
+export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
   { region: "europe-west1", cors: "*" },
   async ({ data }) => {
-    const { exam, owner } = data;
+    const { slug, editCode, exam, owner } = data;
 
     if (!exam.title) {
       throw new HttpsError("invalid-argument", "title not specified.");
+    }
+
+    if (!slug) {
+      throw new HttpsError("invalid-argument", "slug not specified.");
+    }
+
+    if (!editCode) {
+      throw new HttpsError("invalid-argument", "editCode not specified.");
     }
 
     try {
@@ -35,11 +53,32 @@ export const createExam = onCall<CreateExamParams, Promise<CreateExamReturn>>(
       const mail = collectionRef(FirestoreCollection.Mail);
       const secrets = collectionRef(FirestoreCollection.Secrets);
 
+      const sourceExam = await getDocument(FirestoreCollection.Exams, slug);
+
+      // Check for document existence
+      if (!sourceExam) {
+        throw new HttpsError("not-found", "Source exam not found.");
+      }
+
+      const sourceSecrets = await sourceExam.secrets.get();
+
+      if (!sourceSecrets.exists) {
+        throw new HttpsError("internal", "secrets not found for source exam.");
+      }
+
+      // Verify edit code
+      if (sourceSecrets.data()!.editCode !== data.editCode) {
+        throw new HttpsError(
+          "permission-denied",
+          "The edit code provided is incorrect.",
+        );
+      }
+
       // Check for unique slug
-      const slug = sluggify(exam.title);
+      const newSlug = sluggify(exam.title);
       const snapshot = await exams.get(); // @todo: simply get document and see if it exists
       snapshot.forEach((doc) => {
-        if (doc.id === slug) {
+        if (doc.id === newSlug) {
           throw new HttpsError(
             "already-exists",
             "exam with the same name already exists.",
@@ -56,12 +95,30 @@ export const createExam = onCall<CreateExamParams, Promise<CreateExamReturn>>(
         editCode,
       } as Secret);
 
-      // Create exam
+      // Create new exam
       exam.created = new Date();
       exam.secrets = firestore.doc(
         `/${FirestoreCollection.Secrets}/${secret.id}`,
       ) as DocumentReference<Secret>;
-      await exams.doc(slug).set(exam as Exam);
+      await exams.doc(newSlug).set(exam as Exam);
+
+      // Get source questions
+      const questions = await collectionRef(
+        FirestoreCollection.Exams,
+        data.slug,
+        FirestoreCollection.Questions,
+      )
+        .orderBy("order")
+        .get();
+
+      // Copy questions
+      for (const question of questions.docs) {
+        await collectionRef(
+          FirestoreCollection.Exams,
+          newSlug,
+          FirestoreCollection.Questions,
+        ).add(question.data());
+      }
 
       // Queue mail
       if (!process.env.FUNCTIONS_EMULATOR) {
@@ -87,7 +144,7 @@ Edit the exam by using this link: <a href="https://examtraining.online/${slug}/e
         });
       }
 
-      logger.info({ message: "created exam", data });
+      logger.info({ message: "copied exam", data });
 
       return {
         accessCode,

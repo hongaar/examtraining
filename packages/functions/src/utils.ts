@@ -15,6 +15,9 @@ import {
   Timestamp,
 } from "firebase-admin/firestore";
 
+export const EDIT_HASH_LENGTH = 8;
+export const ACCESS_HASH_LENGTH = 2;
+
 type LastElementOf<T extends readonly unknown[]> = T extends readonly [
   ...unknown[],
   infer Last,

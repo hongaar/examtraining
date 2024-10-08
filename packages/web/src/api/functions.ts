@@ -1,5 +1,6 @@
 import type {
   CallableFunction,
+  copyExam,
   createExam,
   createExamQuestion,
   editExamDetails,
@@ -15,6 +16,7 @@ export enum Functions {
   GetExam = "getExam",
   CreateExam = "createExam",
   EditExamDetails = "editExamDetails",
+  CopyExam = "copyExam",
   CreateExamQuestion = "createExamQuestion",
   EditExamQuestion = "editExamQuestion",
   RemoveExamQuestion = "removeExamQuestion",
@@ -30,6 +32,7 @@ export type FunctionTypes = {
   [Functions.EditExamQuestion]: typeof editExamQuestion;
   [Functions.RemoveExamQuestion]: typeof removeExamQuestion;
   [Functions.ExplainQuestion]: typeof explainQuestion;
+  [Functions.CopyExam]: typeof copyExam;
 };
 
 export type FunctionParams<Function> =

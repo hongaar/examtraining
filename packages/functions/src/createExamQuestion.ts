@@ -52,8 +52,6 @@ export const createExamQuestion = onCall<
       );
     }
 
-    // await migrateAnswersIfNeeded(exam);
-
     // Add question
     await collectionRef(
       FirestoreCollection.Exams,

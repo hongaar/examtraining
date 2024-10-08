@@ -5,6 +5,7 @@ import { Route, Switch, useLocation } from "wouter";
 import { useAnalytics } from "./hooks";
 import {
   BulkAddExamQuestions,
+  CopyExam,
   EditExamDetails,
   EditExamQuestions,
   Exam,
@@ -37,6 +38,7 @@ export function App() {
         <Route path="/:exam/edit" component={EditExamDetails} />
         <Route path="/:exam/questions" component={EditExamQuestions} />
         <Route path="/:exam/bulk" component={BulkAddExamQuestions} />
+        <Route path="/:exam/copy" component={CopyExam} />
         <Route path="/:exam" component={Exam} />
         <Route path="/" component={Homepage} />
         <Route component={NotFound} />

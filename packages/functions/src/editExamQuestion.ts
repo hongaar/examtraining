@@ -53,8 +53,6 @@ export const editExamQuestion = onCall<
       );
     }
 
-    // await migrateAnswersIfNeeded(exam);
-
     // Update question
     const questionRef = collectionRef(
       FirestoreCollection.Exams,
