@@ -6,7 +6,12 @@ import { Fragment } from "react/jsx-runtime";
 import { Link } from "wouter";
 import { Jumbotron, Section } from "..";
 import { Functions } from "../../api";
-import { useFunction, useLogEvent, useTraining } from "../../hooks";
+import {
+  useAccessCode,
+  useFunction,
+  useLogEvent,
+  useTraining,
+} from "../../hooks";
 
 type Props = {
   exam: ExamWithQuestions;
@@ -16,6 +21,7 @@ export function Results({ exam }: Props) {
   console.debug("Rendering component Results");
 
   const { trainingQuestions, answers } = useTraining(exam.id);
+  const accessCode = useAccessCode();
   const explain = useFunction(Functions.ExplainQuestion);
   const logEvent = useLogEvent();
   const [explanations, setExplanations] = useState<Record<string, ReactNode>>(
@@ -39,7 +45,7 @@ export function Results({ exam }: Props) {
       });
 
       try {
-        const result = await explain({ slug: exam.id, questionId });
+        const result = await explain({ slug: exam.id, accessCode, questionId });
 
         if (!result) {
           setExplanations((explanations) => ({
