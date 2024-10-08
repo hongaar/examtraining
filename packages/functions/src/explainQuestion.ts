@@ -20,16 +20,25 @@ const OPENAI_MAX_RETRIES = 2;
 const OPENAI_TIMEOUT = 20000; // 20 seconds
 const CHATGPT_MODEL: OpenAI.ChatModel = "gpt-4o-mini";
 const CHATGPT_TEMPERATURE: number = 0;
-const CHATGPT_FREQUENCY_PENALTY: number = 0;
-const CHATGPT_PRESENCE_PENALTY: number = 0;
+const CHATGPT_FREQUENCY_PENALTY: number = 0.1;
+const CHATGPT_PRESENCE_PENALTY: number = 0.1;
 const CHATGPT_MAX_COMPLETION_TOKENS: number = 512;
 const CHATGPT_N = 1;
 
+const systemInstructions = `Explain the correct answer to a question as a \
+teacher would, being as concise and factual as possible. Use a single \
+paragraph and focus on the context and reasoning.
+
+# Notes
+
+- If referencing a law, specify which book and articles are applicable.
+- Avoid introducing unrelated information to maintain clarity.
+- Use references to authoritative sources where possible.
+- Avoid repeating the question or answer itself.`;
+
 function generatePrompt(question: string, correctAnswer: string) {
-  return `Explain in one short paragraph why "${correctAnswer}" is the correct \
-answer to the question "${question}". Provide as much important details as \
-possible. Write in the language of the question. Do not quote the question or \
-the answer itself.`;
+  return `Explain why "${correctAnswer}" is the correct answer to the question \
+"${question}". Explain in the language of the question.`;
 }
 
 function getOpenAIClient() {
@@ -50,11 +59,11 @@ function getOpenAIClient() {
   }));
 }
 
-async function generateCompletion(prompt: string, system?: string) {
+async function generateCompletion(prompt: string) {
   const openai = getOpenAIClient();
   const chatCompletion = await openai.chat.completions.create({
     messages: [
-      ...(system ? [{ role: "system" as const, content: system }] : []),
+      { role: "system", content: systemInstructions },
       { role: "user", content: prompt },
     ],
     model: CHATGPT_MODEL,
