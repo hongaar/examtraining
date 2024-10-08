@@ -21,7 +21,7 @@ export function Training({ params }: { params: { exam: string } }) {
   const [, setLocation] = useLocation();
 
   if (exam instanceof PermissionDenied) {
-    return <ProvideAccessCode returnTo={`/${slug}`} />;
+    return <ProvideAccessCode returnTo={`/${slug}/training`} />;
   }
 
   if (exam === undefined) {

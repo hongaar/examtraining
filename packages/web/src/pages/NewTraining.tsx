@@ -49,7 +49,7 @@ export function NewTraining({ params }: { params: { exam: string } }) {
   }, [exam]);
 
   if (exam instanceof PermissionDenied) {
-    return <ProvideAccessCode returnTo={`/${slug}`} />;
+    return <ProvideAccessCode returnTo={`/${slug}/new-training`} />;
   }
 
   if (exam === undefined) {
@@ -158,17 +158,19 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             <h3>{exam.title}</h3>
             {trainingQuestions.length > 0 && !trainingFinished ? (
               <article>
-                <p>
+                <div>
                   ⚠️ You already have a training in progress. If you start a new
                   training, this will clear your current progress.
-                </p>
-                <Link
-                  role="button"
-                  href={`/${slug}/training`}
-                  className="secondary"
-                >
-                  ↪️ Continue last training
-                </Link>
+                  <br />
+                  <br />
+                  <Link
+                    role="button"
+                    href={`/${slug}/training`}
+                    className="secondary"
+                  >
+                    ↪️ Continue last training
+                  </Link>
+                </div>
               </article>
             ) : null}
             <label>
@@ -235,13 +237,15 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               </label>
             ) : null}
             <article>
-              <p>
+              <div>
                 Don't hurry, this training is not timed in any way. You need to
                 answer at least {exam.threshold}% of the questions with the
                 correct answer in order to pass the exam. You won't see the
                 correct answers until you finish the training.
-              </p>
-              <p>Click the button below to start. Good luck! 🍀</p>
+                <br />
+                <br />
+                Click the button below to start. Good luck! 🍀
+              </div>
             </article>
             <footer>
               <button type="submit">🚀 Start training</button>

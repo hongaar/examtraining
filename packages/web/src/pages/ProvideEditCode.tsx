@@ -32,10 +32,11 @@ export function ProvideEditCode({ returnTo }: Props) {
               window.location.href = returnTo;
             }}
           >
-            <p>
-              If you've just created this exam, please look for the edit code in
-              your mailbox.
-            </p>
+            <div>
+              The edit code was sent by email when the exam was created.
+              <br />
+              <br />
+            </div>
             <fieldset role="group">
               <input
                 name="editCode"

@@ -24,7 +24,7 @@ import {
 
 type CopyExamParams = {
   slug: string;
-  editCode: string;
+  accessCode?: string;
   exam: Partial<Exam>;
   owner: string;
 };
@@ -33,18 +33,14 @@ type CopyExamReturn = { accessCode?: string; editCode: string };
 export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
   { region: "europe-west1", cors: "*" },
   async ({ data }) => {
-    const { slug, editCode, exam, owner } = data;
+    const { slug, accessCode: sourceAccessCode, exam, owner } = data;
 
     if (!exam.title) {
       throw new HttpsError("invalid-argument", "title not specified.");
     }
 
     if (!slug) {
-      throw new HttpsError("invalid-argument", "slug not specified.");
-    }
-
-    if (!editCode) {
-      throw new HttpsError("invalid-argument", "editCode not specified.");
+      throw new HttpsError("invalid-argument", "source slug not specified.");
     }
 
     try {
@@ -66,12 +62,22 @@ export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
         throw new HttpsError("internal", "secrets not found for source exam.");
       }
 
-      // Verify edit code
-      if (sourceSecrets.data()!.editCode !== data.editCode) {
-        throw new HttpsError(
-          "permission-denied",
-          "The edit code provided is incorrect.",
-        );
+      if (sourceExam.private === true) {
+        // If exam is private, verify access code
+        if (!sourceAccessCode) {
+          throw new HttpsError(
+            "permission-denied",
+            "You need an access code to copy this exam.",
+          );
+        }
+
+        // Find secrets
+        if (sourceSecrets.data()!.accessCode !== sourceAccessCode) {
+          throw new HttpsError(
+            "permission-denied",
+            "The access code provided is incorrect.",
+          );
+        }
       }
 
       // Check for unique slug
@@ -132,14 +138,14 @@ ${
   exam.private
     ? `This exam is private. In order to view it you need an access code.<br/>
 The access code is: <code>${accessCode}</code><br/>
-Access the exam by using this link: <a href="https://examtraining.online/${slug}?accessCode=${accessCode}">https://examtraining.online/${slug}?accessCode=${accessCode}</a><br/>
+Access the exam by using this link: <a href="https://examtraining.online/${newSlug}?accessCode=${accessCode}">https://examtraining.online/${newSlug}?accessCode=${accessCode}</a><br/>
 <br/>`
-    : `Access the exam by using this link: <a href="https://examtraining.online/${slug}">https://examtraining.online/${slug}</a><br/>
+    : `Access the exam by using this link: <a href="https://examtraining.online/${newSlug}">https://examtraining.online/${newSlug}</a><br/>
 <br/>`
 }
 In order to make changes to this exam, you need an edit code.<br/>
 The edit code is: <code>${editCode}</code><br/>
-Edit the exam by using this link: <a href="https://examtraining.online/${slug}/edit?editCode=${editCode}">https://examtraining.online/${slug}/edit?editCode=${editCode}</a>`,
+Edit the exam by using this link: <a href="https://examtraining.online/${newSlug}/edit?editCode=${editCode}">https://examtraining.online/${newSlug}/edit?editCode=${editCode}</a>`,
           },
         });
       }

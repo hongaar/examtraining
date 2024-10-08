@@ -10,4 +10,5 @@ export * from "./NewTraining";
 export * from "./NotFound";
 export * from "./ProvideAccessCode";
 export * from "./ProvideEditCode";
+export * from "./ResetExam";
 export * from "./Training";

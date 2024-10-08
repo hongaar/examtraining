@@ -13,6 +13,7 @@ import {
   NewExam,
   NewTraining,
   NotFound,
+  ResetExam,
   Training,
 } from "./pages";
 
@@ -39,6 +40,7 @@ export function App() {
         <Route path="/:exam/questions" component={EditExamQuestions} />
         <Route path="/:exam/bulk" component={BulkAddExamQuestions} />
         <Route path="/:exam/copy" component={CopyExam} />
+        <Route path="/:exam/reset" component={ResetExam} />
         <Route path="/:exam" component={Exam} />
         <Route path="/" component={Homepage} />
         <Route component={NotFound} />

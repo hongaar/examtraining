@@ -13,7 +13,7 @@ export function CopyExam({ params }: { params: { exam: string } }) {
   const { exam } = useExamDirect(slug, { editCode });
 
   if (!editCode || exam instanceof PermissionDenied) {
-    return <ProvideEditCode returnTo={`/${slug}/edit`} />;
+    return <ProvideEditCode returnTo={`/${slug}/copy`} />;
   }
 
   if (exam === undefined) {

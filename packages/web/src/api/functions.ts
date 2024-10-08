@@ -9,6 +9,7 @@ import type {
   getExam,
   isSlugAvailable,
   removeExamQuestion,
+  resetExam,
 } from "@examtraining/functions";
 
 export enum Functions {
@@ -21,6 +22,7 @@ export enum Functions {
   EditExamQuestion = "editExamQuestion",
   RemoveExamQuestion = "removeExamQuestion",
   ExplainQuestion = "explainQuestion",
+  ResetExam = "resetExam",
 }
 
 export type FunctionTypes = {
@@ -33,6 +35,7 @@ export type FunctionTypes = {
   [Functions.RemoveExamQuestion]: typeof removeExamQuestion;
   [Functions.ExplainQuestion]: typeof explainQuestion;
   [Functions.CopyExam]: typeof copyExam;
+  [Functions.ResetExam]: typeof resetExam;
 };
 
 export type FunctionParams<Function> =

@@ -32,7 +32,11 @@ export function ProvideAccessCode({ returnTo }: Props) {
               window.location.href = `${returnTo}?accessCode=${accessCode}`;
             }}
           >
-            <p>This exam is private and requires an access code to view it.</p>
+            <div>
+              This exam is private and requires an access code to view it.
+              <br />
+              <br />
+            </div>
             <fieldset role="group">
               <input
                 name="accessCode"

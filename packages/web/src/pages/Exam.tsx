@@ -68,10 +68,11 @@ export function Exam({ params }: { params: { exam: string } }) {
             <span className="badge">✅ Pass threshold: {exam.threshold}%</span>
             <span className="badge">❓ Questions: {exam.questions.length}</span>
           </h3>
-          {exam.description ? <Markdown>{exam.description}</Markdown> : null}❓{" "}
-          <Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp; 🖊️{" "}
-          <Link href={`/${slug}/edit`}>Edit details</Link> &nbsp; 🖨️{" "}
-          <Link href={`/${slug}/copy`}>Make a copy</Link>
+          {exam.description ? <Markdown>{exam.description}</Markdown> : null}
+          ❓&nbsp;<Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp;
+          🖊️&nbsp;<Link href={`/${slug}/edit`}>Edit details</Link> &nbsp;
+          🖨️&nbsp;<Link href={`/${slug}/copy`}>Make a copy</Link> &nbsp;
+          🔑&nbsp;<Link href={`/${slug}/reset`}>Reset codes</Link>
           <footer className="grid">
             {trainingQuestions.length > 0 ? (
               trainingFinished ? (
