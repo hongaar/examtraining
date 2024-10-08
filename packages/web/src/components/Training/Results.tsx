@@ -70,7 +70,7 @@ export function Results({ exam }: Props) {
         return;
       }
     },
-    [exam.id, explain, explanations, logEvent],
+    [accessCode, exam.id, explain, explanations, logEvent],
   );
 
   const totalCorrect = trainingQuestions.reduce((total, question, index) => {
