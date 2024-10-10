@@ -24,7 +24,7 @@ import {
 
 type CopyExamParams = {
   slug: string;
-  accessCode?: string;
+  editCode: string;
   exam: Partial<Exam>;
   owner: string;
 };
@@ -33,7 +33,7 @@ type CopyExamReturn = { accessCode?: string; editCode: string };
 export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
   { region: "europe-west1", cors: "*" },
   async ({ data }) => {
-    const { slug, accessCode: sourceAccessCode, exam, owner } = data;
+    const { slug, editCode: sourceEditCode, exam, owner } = data;
 
     if (!exam.title) {
       throw new HttpsError("invalid-argument", "title not specified.");
@@ -41,6 +41,10 @@ export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
 
     if (!slug) {
       throw new HttpsError("invalid-argument", "source slug not specified.");
+    }
+
+    if (!sourceEditCode) {
+      throw new HttpsError("invalid-argument", "editCode not specified.");
     }
 
     try {
@@ -62,22 +66,12 @@ export const copyExam = onCall<CopyExamParams, Promise<CopyExamReturn>>(
         throw new HttpsError("internal", "secrets not found for source exam.");
       }
 
-      if (sourceExam.private === true) {
-        // If exam is private, verify access code
-        if (!sourceAccessCode) {
-          throw new HttpsError(
-            "permission-denied",
-            "You need an access code to copy this exam.",
-          );
-        }
-
-        // Find secrets
-        if (sourceSecrets.data()!.accessCode !== sourceAccessCode) {
-          throw new HttpsError(
-            "permission-denied",
-            "The access code provided is incorrect.",
-          );
-        }
+      // Verify edit code
+      if (sourceSecrets.data()!.editCode !== sourceEditCode) {
+        throw new HttpsError(
+          "permission-denied",
+          "The edit code provided is incorrect.",
+        );
       }
 
       // Check for unique slug

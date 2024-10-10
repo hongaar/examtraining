@@ -3,7 +3,7 @@ import { FormEvent, useCallback, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
-import { useAccessCode, useFunction, useLogEvent } from "../../hooks";
+import { useEditCode, useFunction, useLogEvent } from "../../hooks";
 import { Description, Email, Private, Threshold, Title, Url } from "./Fields";
 
 type Props = {
@@ -15,7 +15,7 @@ export function CopyExamForm({ exam }: Props) {
 
   const [slug, setSlug] = useState("");
   const isSlugAvailable = useFunction(Functions.IsSlugAvailable);
-  const accessCode = useAccessCode();
+  const editCode = useEditCode();
   const [slugCheckInProgress, setSlugCheckInProgress] = useState(false);
   const [urlInvalid, setUrlInvalid] = useState<boolean | undefined>(undefined);
   const [, setAccessCode, removeAccessCode] = useLocalStorage("accessCode", "");
@@ -31,13 +31,17 @@ export function CopyExamForm({ exam }: Props) {
 
       const data = new FormData(event.target as any);
 
+      if (!editCode) {
+        throw new Error("Edit code not set.");
+      }
+
       setSaving(true);
       try {
         const { accessCode: newAccessCode, editCode: newEditCode } =
           await progress(
             copyExam({
               slug: exam.id,
-              accessCode,
+              editCode,
               exam: {
                 title: data.get("title") as string,
                 description: data.get("description") as string,
@@ -64,8 +68,8 @@ export function CopyExamForm({ exam }: Props) {
       }
     },
     [
-      accessCode,
       copyExam,
+      editCode,
       exam.id,
       logEvent,
       removeAccessCode,
