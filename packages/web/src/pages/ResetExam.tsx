@@ -6,9 +6,8 @@ import { Functions, progress } from "../api";
 import { Footer, Header, Loading, Main } from "../components";
 import {
   PermissionDenied,
-  useAccessCode,
-  useCachedExam,
   useEditCode,
+  useExamDirect,
   useFunction,
   useLogEvent,
 } from "../hooks";
@@ -20,8 +19,7 @@ export function ResetExam({ params }: { params: { exam: string } }) {
 
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
   const editCode = useEditCode();
-  const accessCode = useAccessCode();
-  const { exam } = useCachedExam(slug, { accessCode });
+  const { exam } = useExamDirect(slug, { editCode });
   const [, setLocation] = useLocation();
   const [saving, setSaving] = useState(false);
   const resetExam = useFunction(Functions.ResetExam);
