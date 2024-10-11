@@ -11,3 +11,4 @@ export * from "./isSlugAvailable";
 export * from "./onExamDeleted";
 export * from "./removeExamQuestion";
 export * from "./resetExam";
+export * from "./suggestExamQuestion";

@@ -117,6 +117,32 @@ button.link {
   background-color: var(--background-color);
 }
 
+// helpers
+
+small.invalid {
+  color: var(--pico-del-color);
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.visually-hidden {
+  visibility: hidden;
+}
+
+.hidden {
+  display: none;
+}
+
+.float-right {
+  float: right;
+}
+
 // footer
 
 #root > footer {
@@ -145,6 +171,10 @@ section {
     background-size: 100% 100%;
     background-position: 0px 0px;
     background-image: linear-gradient(90deg, #6cc16aab 0%, #87ebf9ab 100%);
+
+    &.secondary {
+      background-image: linear-gradient(90deg, #f9ad87ab 0%, #dbe976ab 100%);
+    }
 
     header h1 a {
       @media (prefers-color-scheme: dark) {
@@ -288,28 +318,6 @@ main {
       margin-bottom: var(--pico-spacing);
     }
   }
-}
-
-// helpers
-
-small.invalid {
-  color: var(--pico-del-color);
-}
-
-.align-right {
-  text-align: right;
-}
-
-.align-center {
-  text-align: center;
-}
-
-.visually-hidden {
-  visibility: hidden;
-}
-
-.hidden {
-  display: none;
 }
 
 // components

@@ -46,6 +46,12 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
   >();
   const logEvent = useLogEvent();
   const flush = useFlushCachedExam();
+  const [suggestBasedOnQuestion, setSuggestBasedOnQuestion] = useState<
+    string | null
+  >(null);
+  const [suggestBasedOnSubject, setSuggestBasedOnSubject] = useState<
+    string | null
+  >(null);
 
   maxQuestionOrder =
     exam instanceof PermissionDenied
@@ -89,6 +95,8 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         return;
       }
 
+      setSuggestBasedOnQuestion(null);
+      setSuggestBasedOnSubject(null);
       setSaving(true);
       try {
         await progress(
@@ -220,15 +228,22 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             key={editQuestion.id}
             question={editQuestion}
             categories={categories}
-            onCancel={() => setEditQuestion(undefined)}
+            onCancel={() => {
+              setSuggestBasedOnQuestion(null);
+              setSuggestBasedOnSubject(null);
+              setEditQuestion(undefined);
+            }}
             onSubmit={onEditQuestion}
             disabled={saving}
           />
         ) : (
           <NewQuestionForm
+            slug={slug}
             categories={categories}
             onSubmit={onNewQuestion}
             disabled={saving}
+            suggestBasedOnQuestion={suggestBasedOnQuestion}
+            suggestBasedOnSubject={suggestBasedOnSubject}
           />
         )}
         <article>
@@ -279,11 +294,54 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                   }}
                 >
                   🗑️ Remove question
+                </button>{" "}
+                <button
+                  className="inline outline secondary"
+                  type="button"
+                  onClick={() => {
+                    setEditQuestion(undefined);
+                    document
+                      .getElementsByTagName("form")[0]
+                      ?.scrollIntoView({ behavior: "smooth" });
+                    setSuggestBasedOnSubject(null);
+                    setSuggestBasedOnQuestion(question.id);
+                  }}
+                  data-tooltip="Generate a question based on this question"
+                >
+                  ✨ Generate similar question
                 </button>
               </details>
               {i !== exam.questions.length - 1 ? <hr /> : null}
             </Fragment>
           ))}
+        </article>
+        <article>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const data = new FormData(event.target as HTMLFormElement);
+              document
+                .getElementsByTagName("form")[0]
+                ?.scrollIntoView({ behavior: "smooth" });
+              setSuggestBasedOnQuestion(null);
+              setSuggestBasedOnSubject(data.get("subject") as string);
+            }}
+          >
+            <fieldset className="grid">
+              <input
+                type="text"
+                name="subject"
+                placeholder="Subject"
+                required
+                style={{ marginBottom: 0 }}
+              />
+              <input
+                type="submit"
+                className="secondary outline"
+                value="✨ Generate question on this subject"
+              />
+            </fieldset>
+          </form>
         </article>
         <Back slug={slug} />
         &nbsp; ⏩{" "}

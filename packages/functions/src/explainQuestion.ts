@@ -8,32 +8,13 @@ import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 // @ts-ignore
 import { FirestoreCollection } from "@examtraining/core";
-import { defineSecret } from "firebase-functions/params";
-import OpenAI from "openai";
-import { collectionRef, getDocument } from "./utils";
-
-const openAIApiKey = defineSecret("OPENAI_API_KEY");
-
-let client: OpenAI;
-
-const OPENAI_MAX_RETRIES = 2;
-const OPENAI_TIMEOUT = 20000; // 20 seconds
-const CHATGPT_MODEL: OpenAI.ChatModel = "gpt-4o-mini";
-const CHATGPT_TEMPERATURE: number = 0;
-const CHATGPT_FREQUENCY_PENALTY: number = 0.1;
-const CHATGPT_PRESENCE_PENALTY: number = 0.1;
-const CHATGPT_MAX_COMPLETION_TOKENS: number = 512;
-const CHATGPT_N = 1;
-
-const systemInstructions = `Explain the correct answer to a question as a \
-teacher would, being as concise and factual as possible. Use a single \
-paragraph and focus on the context and reasoning.
-
-# Notes
-
-- Avoid introducing unrelated information to maintain clarity.
-- Use references to authoritative sources where possible.
-- Avoid repeating the question or answer itself.`;
+import {
+  collectionRef,
+  getDefaultCompletionsParams,
+  getDocument,
+  getOpenAIClient,
+  openAIApiKey,
+} from "./utils";
 
 function generatePrompt(
   question: string,
@@ -43,24 +24,6 @@ function generatePrompt(
   return `Explain why "${correctAnswer}" is the correct answer instead of "\
 ${incorrectAnswers.join('" or "')}" to the question "${question}". Explain in the \
 language of the question.`;
-}
-
-function getOpenAIClient() {
-  if (client) {
-    return client;
-  }
-
-  const apiKey = openAIApiKey.value() || process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set");
-  }
-
-  return (client = new OpenAI({
-    apiKey,
-    maxRetries: OPENAI_MAX_RETRIES,
-    timeout: OPENAI_TIMEOUT,
-  }));
 }
 
 async function generateCompletion({
@@ -76,18 +39,13 @@ async function generateCompletion({
       ...(system ? [{ role: "system" as const, content: system }] : []),
       { role: "user", content: user },
     ],
-    model: CHATGPT_MODEL,
-    temperature: CHATGPT_TEMPERATURE,
-    frequency_penalty: CHATGPT_FREQUENCY_PENALTY,
-    presence_penalty: CHATGPT_PRESENCE_PENALTY,
-    max_completion_tokens: CHATGPT_MAX_COMPLETION_TOKENS,
-    n: CHATGPT_N,
+    ...getDefaultCompletionsParams(),
   });
 
   const result = chatCompletion.choices[0]?.message.content;
 
   if (typeof result !== "string") {
-    throw new Error("No result from gpt-3.5-turbo");
+    throw new Error("No result from ChatGPT");
   }
 
   return result;

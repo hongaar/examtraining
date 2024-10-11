@@ -1,9 +1,8 @@
-import { AddId, Question } from "@examtraining/core";
+import { AddId, Question, shuffle } from "@examtraining/core";
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { Link, useLocation } from "wouter";
-import { shuffle } from "../api";
 import { Back, Footer, Header, Loading, Main, Range } from "../components";
 import {
   PermissionDenied,

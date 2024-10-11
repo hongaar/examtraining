@@ -1,8 +1,6 @@
 import {
   AddIdAndRef,
-  Answer,
   Doc,
-  Exam,
   FirestoreCollection,
   PlainDoc,
 } from "@examtraining/core";
@@ -87,18 +85,18 @@ export function toIdAndRef<T>(snapshot: QuerySnapshot<T>) {
   return collection;
 }
 
-export function toPlainObject<T extends AddIdAndRef<DocumentData>>(
-  data: T | null,
-) {
+export function toPlainObject<T extends AddIdAndRef<DocumentData> | null>(
+  data: T,
+): T extends null ? null : PlainDoc<T> {
   if (data === null) {
-    return null;
+    return null as any;
   }
 
   const copy = { ...data };
 
   Object.entries(copy).forEach(([key, value]) => {
     if (key === "_ref") {
-      delete copy[key as keyof T];
+      delete copy[key as any];
     }
 
     if (
@@ -107,7 +105,7 @@ export function toPlainObject<T extends AddIdAndRef<DocumentData>>(
       (value.constructor === DocumentReference ||
         value.constructor === CollectionReference)
     ) {
-      delete copy[key as keyof T];
+      delete copy[key as any];
     }
 
     if (
@@ -115,74 +113,13 @@ export function toPlainObject<T extends AddIdAndRef<DocumentData>>(
       value !== null &&
       value.constructor === Object
     ) {
-      copy[key as keyof T] = toPlainObject(value) as any;
+      copy[key as any] = toPlainObject(value) as any;
     }
 
     if (value instanceof Timestamp) {
-      copy[key as keyof T] = { _time: value.toDate().toISOString() } as any;
+      copy[key as any] = { _time: value.toDate().toISOString() } as any;
     }
   });
 
-  return copy as PlainDoc<T>;
-}
-
-export async function migrateAnswersIfNeeded(exam: AddIdAndRef<Exam>) {
-  // Read first question
-  const question = (
-    await collectionRef(
-      FirestoreCollection.Exams,
-      exam.id,
-      FirestoreCollection.Questions,
-    )
-      .limit(1)
-      .get()
-  ).docs[0];
-
-  if (question) {
-    if (typeof question.data().answers === "undefined") {
-      const questions = toIdAndRef(
-        await collectionRef(
-          FirestoreCollection.Exams,
-          exam.id,
-          FirestoreCollection.Questions,
-        )
-          .orderBy("order")
-          .get(),
-      );
-
-      for (const key in questions) {
-        const question = questions[key];
-        const answersRef = collectionRef(
-          FirestoreCollection.Exams,
-          exam.id,
-          FirestoreCollection.Questions,
-          question.id,
-          FirestoreCollection.Answers,
-        );
-        const answers = toIdAndRef(await answersRef.orderBy("order").get());
-
-        const plainAnswers: Answer[] = [];
-        answers.forEach(({ id, description, order, correct }) => {
-          plainAnswers.push({
-            id,
-            description,
-            order,
-            correct,
-          });
-        });
-
-        // Remove answers collection
-        await firestore().recursiveDelete(answersRef);
-
-        // Add answers to question doc
-        await question._ref.update({
-          answers: plainAnswers,
-        });
-      }
-
-      console.log(
-        "first question still had answers collection, migrated all questions",
-      );
-    }
-  }
+  return copy as any;
 }

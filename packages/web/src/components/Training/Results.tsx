@@ -108,7 +108,7 @@ export function Results({ exam }: Props) {
           </Jumbotron>
         </Section>
       ) : (
-        <Section className="bg round">
+        <Section className="bg secondary round">
           <Jumbotron>
             {[
               <>
@@ -178,19 +178,19 @@ export function Results({ exam }: Props) {
               {explanations[question.id] ? (
                 <p>
                   <i>
+                    <img
+                      src="/openai.svg"
+                      style={{ height: "1em", verticalAlign: "middle" }}
+                      alt="OpenAI logo"
+                    />{" "}
                     <b data-tooltip="Explanation might not be 100% accurate.">
-                      <img
-                        src="/openai.svg"
-                        style={{ height: "1em", verticalAlign: "middle" }}
-                        alt="OpenAI logo"
-                      />{" "}
-                      ChatGPT:
+                      ChatGPT explanation:
                     </b>
                     <br />
                     {explanations[question.id]}
                   </i>
                 </p>
-              ) : (
+              ) : exam.enableAI ? (
                 <button
                   className="inline outline"
                   data-tooltip="Explanation might not be 100% accurate."
@@ -198,14 +198,9 @@ export function Results({ exam }: Props) {
                     explainQuestion(question.id);
                   }}
                 >
-                  <img
-                    src="/openai.svg"
-                    style={{ height: "1em", verticalAlign: "middle" }}
-                    alt="OpenAI logo"
-                  />{" "}
-                  Explain with ChatGPT
+                  ✨ Explain with ChatGPT
                 </button>
-              )}
+              ) : null}
             </details>
             {i !== trainingQuestions.length - 1 ? <hr /> : null}
           </Fragment>
