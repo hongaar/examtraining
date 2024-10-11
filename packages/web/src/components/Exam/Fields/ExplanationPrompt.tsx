@@ -8,7 +8,7 @@ type Props = {
 export function ExplanationPrompt({ className, defaultValue }: Props) {
   return (
     <label className={className}>
-      Description
+      Explanation prompt
       <textarea
         name="explanationPrompt"
         placeholder="Explanation prompt"

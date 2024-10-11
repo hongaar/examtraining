@@ -60,7 +60,7 @@ export function Homepage() {
               <h3>Get help from AI.</h3>
               <p>
                 Create new questions and answers with the power of ChatGPT.
-                Students can use AI for questions explanation.
+                Students can use AI for question explanation.
               </p>
               <Link role="button" href="/new">
                 ✨ Get started
