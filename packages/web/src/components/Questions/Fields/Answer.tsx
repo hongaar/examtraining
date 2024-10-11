@@ -52,7 +52,7 @@ export function Answer({
             "❌"
           )
         ) : (
-          <span className="hidden">❌</span>
+          <span className="visually-hidden">❌</span>
         )}
       </label>
       <input

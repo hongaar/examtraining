@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { Link, useLocation } from "wouter";
 import { shuffle } from "../api";
-import { Footer, Header, Loading, Main, Range } from "../components";
+import { Back, Footer, Header, Loading, Main, Range } from "../components";
 import {
   PermissionDenied,
   useAccessCode,
@@ -158,19 +158,17 @@ export function NewTraining({ params }: { params: { exam: string } }) {
             <h3>{exam.title}</h3>
             {trainingQuestions.length > 0 && !trainingFinished ? (
               <article>
-                <div>
+                <section>
                   ⚠️ You already have a training in progress. If you start a new
                   training, this will clear your current progress.
-                  <br />
-                  <br />
-                  <Link
-                    role="button"
-                    href={`/${slug}/training`}
-                    className="secondary"
-                  >
-                    ↪️ Continue last training
-                  </Link>
-                </div>
+                </section>
+                <Link
+                  role="button"
+                  href={`/${slug}/training`}
+                  className="secondary"
+                >
+                  ↪️ Continue last training
+                </Link>
               </article>
             ) : null}
             <label>
@@ -237,22 +235,20 @@ export function NewTraining({ params }: { params: { exam: string } }) {
               </label>
             ) : null}
             <article>
-              <div>
-                Don't hurry, this training is not timed in any way. You need to
-                answer at least {exam.threshold}% of the questions with the
-                correct answer in order to pass the exam. You won't see the
-                correct answers until you finish the training.
-                <br />
-                <br />
-                Click the button below to start. Good luck! 🍀
-              </div>
+              Don't hurry, this training is not timed in any way. You need to
+              answer at least {exam.threshold}% of the questions with the
+              correct answer in order to pass the exam. You won't see the
+              correct answers until you finish the training.
+              <br />
+              <br />
+              Click the button below to start. Good luck! 🍀
             </article>
             <footer>
               <button type="submit">🚀 Start training</button>
             </footer>
           </article>
         </form>
-        ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
+        <Back slug={slug} />
       </Main>
       <Footer />
     </>

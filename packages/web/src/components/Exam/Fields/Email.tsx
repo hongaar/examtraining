@@ -1,25 +1,27 @@
 type Props = {
   defaultValue?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  helper?: string;
 };
 
-export function Email({ defaultValue, onChange, helper }: Props) {
+export function Email({ defaultValue, onChange }: Props) {
   return (
     <label>
-      Email
+      Email address
       <input
         type="email"
         name="email"
-        placeholder="Email"
+        placeholder="Email address"
         autoComplete="email"
-        aria-label="Email"
+        aria-label="Email address"
         aria-describedby="email-helper"
         required
         defaultValue={defaultValue}
         onChange={onChange}
       />
-      {helper ? <small id="title-helper">{helper}</small> : undefined}
+      <small id="title-helper">
+        We'll send you a link so you can edit this exam later. Of course, we'll
+        never share your email address with anyone else.
+      </small>
     </label>
   );
 }

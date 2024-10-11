@@ -300,8 +300,16 @@ small.invalid {
   text-align: right;
 }
 
-.hidden {
+.align-center {
+  text-align: center;
+}
+
+.visually-hidden {
   visibility: hidden;
+}
+
+.hidden {
+  display: none;
 }
 
 // components

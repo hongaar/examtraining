@@ -1,9 +1,9 @@
 import { FormEvent, useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useLocalStorage } from "usehooks-ts";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { Functions, progress } from "../api";
-import { Footer, Header, Loading, Main } from "../components";
+import { Back, Footer, Header, Loading, Main } from "../components";
 import {
   PermissionDenied,
   useEditCode,
@@ -96,18 +96,19 @@ export function ResetExam({ params }: { params: { exam: string } }) {
         <form onSubmit={reset}>
           <article>
             <h3>Reset exam</h3>
-            {exam.private ? (
-              <div>
-                This exam is private, students will need to enter the new access
-                code. The edit code will also be reset.
-              </div>
-            ) : (
-              <div>This exam is public, only the edit code will be reset.</div>
-            )}
-            <div>
+            <section>
+              {exam.private ? (
+                <>
+                  This exam is private, students will need to enter the new
+                  access code. The edit code will also be reset.
+                </>
+              ) : (
+                <>This exam is public, only the edit code will be reset.</>
+              )}
+              <br />
               The new codes will be sent to the email address which was entered
               when the exam was created.
-            </div>
+            </section>
             <footer>
               <fieldset className="grid">
                 <button
@@ -128,7 +129,7 @@ export function ResetExam({ params }: { params: { exam: string } }) {
             </footer>
           </article>
         </form>{" "}
-        ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
+        <Back slug={slug} />
       </Main>
       <Footer />
     </>

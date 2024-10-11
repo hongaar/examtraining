@@ -2,9 +2,14 @@ import { sluggify } from "@examtraining/core";
 import { FormEvent, useCallback, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
-import { Functions, progress, USE_DUMMY_DATA } from "../../api";
+import {
+  DEFAULT_EXPLANATION_PROMPT,
+  Functions,
+  progress,
+  USE_DUMMY_DATA,
+} from "../../api";
 import { useFlushCachedExam, useFunction, useLogEvent } from "../../hooks";
-import { Description, Email, Private, Threshold, Title, Url } from "./Fields";
+import { Email, Private, Threshold, Title, Url } from "./Fields";
 
 export function NewExamForm() {
   console.debug("Rendering component NewExamForm");
@@ -35,9 +40,11 @@ export function NewExamForm() {
           createExam({
             exam: {
               title: data.get("title") as string,
-              description: data.get("description") as string,
+              description: null,
               threshold: Number(data.get("threshold")),
               private: data.get("private") === "on",
+              enableAI: true,
+              explanationPrompt: DEFAULT_EXPLANATION_PROMPT,
             },
             owner: data.get("email") as string,
           }),
@@ -108,20 +115,6 @@ export function NewExamForm() {
             }
           />
           <Url busy={slugCheckInProgress} slug={slug} invalid={urlInvalid} />
-          <Description
-            onChange={(event) => {
-              if (event.target.checkValidity()) {
-                event.target.setAttribute("aria-invalid", "false");
-              } else {
-                event.target.setAttribute("aria-invalid", "true");
-              }
-            }}
-            defaultValue={
-              USE_DUMMY_DATA
-                ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut libero diam. Maecenas venenatis facilisis ex, in consectetur ipsum. Vivamus at ipsum semper nulla facilisis efficitur. Donec quis nibh hendrerit, elementum urna id, porttitor dui. Nullam egestas nisi vitae ligula vestibulum tristique. Etiam luctus iaculis tortor, vel laoreet nulla condimentum et. Cras risus metus, sagittis et sollicitudin eu, ullamcorper non erat. Quisque pulvinar leo a lectus finibus blandit. Donec ipsum nulla, consequat ac massa sit amet, rutrum semper urna. Nulla dapibus nunc a magna vulputate, quis accumsan tortor vehicula. Ut tristique arcu ac orci aliquet aliquet. Vestibulum cursus eros sed ullamcorper dictum. Vestibulum vitae scelerisque turpis. Sed tristique est massa, eu gravida nulla porta sit amet. Pellentesque urna erat, euismod vitae risus eget, convallis consequat lectus."
-                : undefined
-            }
-          />
           <Email
             defaultValue={USE_DUMMY_DATA ? "hongaar@gmail.com" : undefined}
             onChange={(event) => {
@@ -131,8 +124,6 @@ export function NewExamForm() {
                 event.target.setAttribute("aria-invalid", "true");
               }
             }}
-            helper="We'll send you a link so you can edit this exam later. Also, we'll
-              never share your email with anyone else."
           />
           <Threshold />
           <Private />

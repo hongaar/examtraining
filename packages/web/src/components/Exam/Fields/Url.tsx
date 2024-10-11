@@ -6,6 +6,13 @@ type Props = {
   invalid?: boolean;
 };
 
+function getUrlPrefix() {
+  // Returns current protocol, hostname and port (if not 80 or 443)
+  return `${window.location.protocol}//${window.location.hostname}${
+    window.location.port ? `:${window.location.port}` : ""
+  }`;
+}
+
 export function Url({ busy, slug, invalid }: Props) {
   return (
     <label>
@@ -25,7 +32,7 @@ export function Url({ busy, slug, invalid }: Props) {
         aria-invalid={invalid}
         readOnly
         disabled
-        value={`examtraining.online/${slug}`}
+        value={`${getUrlPrefix()}/${slug}`}
       />
       <small id="slug-helper">This will be the URL of the exam.</small>
     </label>

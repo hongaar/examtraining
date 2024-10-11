@@ -9,7 +9,14 @@ import {
   useFunction,
   useLogEvent,
 } from "../../hooks";
-import { Description, Private, Threshold, Title } from "./Fields";
+import {
+  AI,
+  Description,
+  ExplanationPrompt,
+  Private,
+  Threshold,
+  Title,
+} from "./Fields";
 
 type Props = {
   exam: ExamWithQuestions;
@@ -26,6 +33,7 @@ export function EditExamForm({ exam }: Props) {
   const [saving, setSaving] = useState(false);
   const logEvent = useLogEvent();
   const flush = useFlushCachedExam();
+  const [AIEnabled, setAIEnabled] = useState(exam.enableAI);
 
   const editExam = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -48,6 +56,8 @@ export function EditExamForm({ exam }: Props) {
               description: data.get("description") as string,
               threshold: Number(data.get("threshold")),
               private: data.get("private") === "on",
+              enableAI: data.get("enableAI") === "on",
+              explanationPrompt: data.get("explanationPrompt") as string,
             },
           }),
           "Saving exam details",
@@ -103,6 +113,16 @@ export function EditExamForm({ exam }: Props) {
           />
           <Threshold defaultValue={exam.threshold} />
           <Private defaultChecked={exam.private} />
+          <AI
+            defaultChecked={exam.enableAI}
+            onChange={(event) => {
+              setAIEnabled(event.target.checked);
+            }}
+          />
+          <ExplanationPrompt
+            className={AIEnabled ? undefined : "hidden"}
+            defaultValue={exam.explanationPrompt}
+          />
         </fieldset>
         <footer>
           <fieldset className="grid">

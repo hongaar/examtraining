@@ -136,8 +136,6 @@ export function CopyExamForm({ exam }: Props) {
                 event.target.setAttribute("aria-invalid", "true");
               }
             }}
-            helper="We'll send you a link so you can edit this exam later. Also, we'll
-              never share your email with anyone else."
           />
           <Threshold defaultValue={exam.threshold} />
           <Private defaultChecked={exam.private} />

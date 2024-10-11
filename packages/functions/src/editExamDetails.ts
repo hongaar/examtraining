@@ -77,7 +77,9 @@ Access the exam by using this link: <a href="https://examtraining.online/${data.
 
     logger.info({ message: "edited exam details", data });
 
-    return {};
+    return {
+      accessCode: data.data.private ? secrets.data()!.accessCode : undefined,
+    };
   } catch (error) {
     logger.error(error);
     throw error;

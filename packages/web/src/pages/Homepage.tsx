@@ -53,17 +53,17 @@ export function Homepage() {
         <Jumbotron className="large">
           {[
             <img
-              src="/undraw_text_field_htlv.svg"
-              alt="Woman filling out a text field"
+              src="/undraw_chat_bot_re_e2gj.svg"
+              alt="Chat bot with text balloon"
             />,
             <>
-              <h3>Easy management of questions and answers.</h3>
+              <h3>Get help from AI.</h3>
               <p>
-                Create new exams by copy-pasting questions and answers from
-                existing documents, or start entirely from scratch.
+                Create new questions and answers with the power of ChatGPT.
+                Students can use AI for questions explanation.
               </p>
               <Link role="button" href="/new">
-                ✨ Create exam
+                ✨ Get started
               </Link>
             </>,
           ]}
@@ -123,6 +123,26 @@ export function Homepage() {
                   existing documents.
                 </div>
               </div>
+            </>,
+          ]}
+        </Jumbotron>
+      </Section>
+      <Section className="homepage">
+        <Jumbotron className="large">
+          {[
+            <img
+              src="/undraw_text_field_htlv.svg"
+              alt="Woman filling out a text field"
+            />,
+            <>
+              <h3>Easy management of questions and answers.</h3>
+              <p>
+                Create new exams by copy-pasting questions and answers from
+                existing documents, or start entirely from scratch.
+              </p>
+              <Link role="button" href="/new">
+                📝 Create exam
+              </Link>
             </>,
           ]}
         </Jumbotron>

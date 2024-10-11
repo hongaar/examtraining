@@ -7,6 +7,7 @@ import {
   PermissionDenied,
   useAccessCode,
   useCachedExam,
+  useEditCode,
   useRecentExams,
   useTraining,
 } from "../hooks";
@@ -18,6 +19,7 @@ export function Exam({ params }: { params: { exam: string } }) {
 
   const slug = params.exam ? decodeURIComponent(params.exam) : "";
   const accessCode = useAccessCode();
+  const editCode = useEditCode();
   const { exam } = useCachedExam(slug, { accessCode });
   const { addRecentExam } = useRecentExams();
   const { trainingQuestions, current } = useTraining(slug);
@@ -68,11 +70,16 @@ export function Exam({ params }: { params: { exam: string } }) {
             <span className="badge">✅ Pass threshold: {exam.threshold}%</span>
             <span className="badge">❓ Questions: {exam.questions.length}</span>
           </h3>
-          {exam.description ? <Markdown>{exam.description}</Markdown> : null}
-          ❓&nbsp;<Link href={`/${slug}/questions`}>Edit questions</Link> &nbsp;
-          🖊️&nbsp;<Link href={`/${slug}/edit`}>Edit details</Link> &nbsp;
-          🖨️&nbsp;<Link href={`/${slug}/copy`}>Make a copy</Link> &nbsp;
-          🔑&nbsp;<Link href={`/${slug}/reset`}>Reset codes</Link>
+          {exam.description ? (
+            <Markdown>{exam.description}</Markdown>
+          ) : editCode ? (
+            <>
+              🖊️&nbsp;
+              <Link className="secondary" href={`/${slug}/edit`}>
+                Add description
+              </Link>
+            </>
+          ) : null}
           <footer className="grid">
             {trainingQuestions.length > 0 ? (
               trainingFinished ? (
@@ -97,6 +104,14 @@ export function Exam({ params }: { params: { exam: string } }) {
               🧠 New training
             </Link>
           </footer>
+          {editCode ? (
+            <footer>
+              ❓&nbsp;<Link href={`/${slug}/questions`}>Edit questions</Link>{" "}
+              &nbsp; 🖊️&nbsp;<Link href={`/${slug}/edit`}>Edit details</Link>{" "}
+              &nbsp; 🖨️&nbsp;<Link href={`/${slug}/copy`}>Make a copy</Link>{" "}
+              &nbsp; 🔑&nbsp;<Link href={`/${slug}/reset`}>Reset codes</Link>
+            </footer>
+          ) : null}
         </article>
       </Main>
       <Footer />

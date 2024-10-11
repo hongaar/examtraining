@@ -1,6 +1,12 @@
 import { Helmet } from "react-helmet";
-import { Link } from "wouter";
-import { CopyExamForm, Footer, Header, Loading, Main } from "../components";
+import {
+  Back,
+  CopyExamForm,
+  Footer,
+  Header,
+  Loading,
+  Main,
+} from "../components";
 import { PermissionDenied, useEditCode, useExamDirect } from "../hooks";
 import { NotFound } from "./NotFound";
 import { ProvideEditCode } from "./ProvideEditCode";
@@ -32,7 +38,7 @@ export function CopyExam({ params }: { params: { exam: string } }) {
       <Header>Copy exam</Header>
       <Main>
         <CopyExamForm exam={exam} />
-        ⬅️ <Link to={`/${slug}`}>Back to exam</Link>
+        <Back slug={slug} />
       </Main>
       <Footer />
     </>

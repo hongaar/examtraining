@@ -4,7 +4,7 @@ import Markdown from "react-markdown";
 import nl2br from "react-nl2br";
 import { Fragment } from "react/jsx-runtime";
 import { Link } from "wouter";
-import { Jumbotron, Section } from "..";
+import { Back, Jumbotron, Section } from "..";
 import { Functions } from "../../api";
 import {
   useAccessCode,
@@ -214,7 +214,7 @@ export function Results({ exam }: Props) {
       <Link role="button" href={`/${exam.id}/new-training`}>
         🧠 New training
       </Link>{" "}
-      or ⬅️ <Link to={`/${exam.id}`}>Back to exam</Link>
+      or <Back slug={exam.id} />
     </>
   );
 }

@@ -31,7 +31,6 @@ paragraph and focus on the context and reasoning.
 
 # Notes
 
-- If referencing a law, specify which book and articles are applicable.
 - Avoid introducing unrelated information to maintain clarity.
 - Use references to authoritative sources where possible.
 - Avoid repeating the question or answer itself.`;
@@ -41,8 +40,8 @@ function generatePrompt(
   correctAnswer: string,
   incorrectAnswers: string[],
 ) {
-  return `Explain why "${correctAnswer}" is the correct answer instead of \
-${incorrectAnswers.join(" or ")} to the question "${question}". Explain in the \
+  return `Explain why "${correctAnswer}" is the correct answer instead of "\
+${incorrectAnswers.join('" or "')}" to the question "${question}". Explain in the \
 language of the question.`;
 }
 
@@ -64,12 +63,18 @@ function getOpenAIClient() {
   }));
 }
 
-async function generateCompletion(prompt: string) {
+async function generateCompletion({
+  user,
+  system,
+}: {
+  user: string;
+  system?: string | null;
+}) {
   const openai = getOpenAIClient();
   const chatCompletion = await openai.chat.completions.create({
     messages: [
-      { role: "system", content: systemInstructions },
-      { role: "user", content: prompt },
+      ...(system ? [{ role: "system" as const, content: system }] : []),
+      { role: "user", content: user },
     ],
     model: CHATGPT_MODEL,
     temperature: CHATGPT_TEMPERATURE,
@@ -161,13 +166,14 @@ export const explainQuestion = onCall<
 
       const incorrectAnswers = question.answers.filter((a) => !a.correct);
 
-      const explanation = await generateCompletion(
-        generatePrompt(
+      const explanation = await generateCompletion({
+        user: generatePrompt(
           question.description,
           correctAnswer.description,
           incorrectAnswers.map((a) => a.description),
         ),
-      );
+        system: exam.explanationPrompt,
+      });
 
       return {
         explanation,

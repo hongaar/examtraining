@@ -8,6 +8,7 @@ import stringSimilarity from "string-similarity-js";
 import { Link } from "wouter";
 import { Functions, progress } from "../api";
 import {
+  Back,
   EditQuestionForm,
   Footer,
   Header,
@@ -284,8 +285,11 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
             </Fragment>
           ))}
         </article>
-        ⬅️ <Link to={`/${slug}`}>Back to exam</Link> &nbsp; ⏩{" "}
-        <Link to={`/${slug}/bulk`}>Bulk add questions</Link>
+        <Back slug={slug} />
+        &nbsp; ⏩{" "}
+        <Link className="secondary" to={`/${slug}/bulk`}>
+          Bulk add questions
+        </Link>
       </Main>
       <Footer />
     </>
