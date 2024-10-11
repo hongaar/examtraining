@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500&family=Fira+Sans:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 
-/*
+/************************************************************
 breakpoints:
 
 min-width: 576px
@@ -8,8 +8,8 @@ min-width: 768px
 min-width: 1024px
 min-width: 1280px
 min-width: 1536px
+************************************************************/
 
-*/
 :root {
   font-family: "Fira Sans", sans-serif;
 
@@ -23,7 +23,9 @@ min-width: 1536px
   suffix: " ";
 }
 
-// layout
+/************************************************************
+layout
+************************************************************/
 
 #root {
   > header,
@@ -33,7 +35,9 @@ min-width: 1536px
   }
 }
 
-// tweak spacing
+/************************************************************
+spacing
+************************************************************/
 
 fieldset legend,
 label {
@@ -67,7 +71,9 @@ article {
   }
 }
 
-// elements
+/************************************************************
+elements
+************************************************************/
 
 h1,
 h2,
@@ -117,7 +123,9 @@ button.link {
   background-color: var(--background-color);
 }
 
-// helpers
+/************************************************************
+helpers
+************************************************************/
 
 small.invalid {
   color: var(--pico-del-color);
@@ -143,7 +151,19 @@ small.invalid {
   float: right;
 }
 
-// footer
+.s-full-width {
+  display: block !important;
+  width: 100% !important;
+
+  @media (min-width: 768px) {
+    display: initial !important;
+    width: initial !important;
+  }
+}
+
+/************************************************************
+footer
+************************************************************/
 
 #root > footer {
   padding-top: calc(var(--pico-spacing) * 3);
@@ -151,7 +171,9 @@ small.invalid {
   text-align: center;
 }
 
-// section
+/************************************************************
+section
+************************************************************/
 
 section {
   padding-top: 0;
@@ -207,7 +229,9 @@ main {
   }
 }
 
-// homepage
+/************************************************************
+homepage
+************************************************************/
 
 .homepage {
   .jumbotron {
@@ -222,8 +246,6 @@ main {
     }
   }
 }
-
-// jumbotron
 
 .jumbotron {
   padding: var(--pico-block-spacing-vertical) 0;
@@ -320,56 +342,10 @@ main {
   }
 }
 
-// components
+/************************************************************
+site title
+************************************************************/
 
-// select
-.select {
-  margin-top: calc(var(--pico-spacing) * 0.25);
-
-  + small {
-    display: block;
-    width: 100%;
-    margin-top: calc(var(--pico-spacing) * 0.25);
-    margin-bottom: var(--pico-spacing);
-    color: var(--pico-muted-color);
-  }
-
-  input {
-    box-shadow: none;
-  }
-
-  .select__control {
-    border: var(--pico-border-width) solid var(--pico-form-element-border-color) !important;
-  }
-
-  .select__control--is-focused {
-    border: var(--pico-border-width) solid var(--pico-border-color);
-    box-shadow: 0 0 0 var(--pico-outline-width)
-      var(--pico-form-element-focus-color);
-  }
-
-  .select__value-container {
-    padding: 0 var(--pico-form-element-spacing-horizontal);
-  }
-
-  .select__multi-value {
-    margin: 0 calc(var(--pico-spacing) * 0.25) 0 0;
-    align-items: center;
-  }
-
-  .select__multi-value__label {
-    padding: 0 calc(var(--pico-spacing) * 0.5);
-  }
-
-  .select__multi-value__remove {
-    border: none;
-    color: hsl(0, 0%, 20%);
-    background-color: hsl(0, 0%, 90%);
-    padding: calc(var(--pico-spacing) * 0.5);
-  }
-}
-
-// site title
 hgroup {
   > h1 {
     margin-bottom: 0.5rem;
@@ -396,7 +372,115 @@ hgroup {
   }
 }
 
-// badge
+/************************************************************
+loading
+************************************************************/
+
+.loading {
+  display: flex;
+  min-height: 25vh;
+  align-items: center;
+  justify-content: center;
+}
+
+/************************************************************
+select
+************************************************************/
+
+.select {
+  margin-top: calc(var(--pico-spacing) * 0.25);
+
+  + small {
+    display: block;
+    width: 100%;
+    margin-top: calc(var(--pico-spacing) * 0.25);
+    margin-bottom: var(--pico-spacing);
+    color: var(--pico-muted-color);
+  }
+
+  input {
+    box-shadow: none;
+  }
+
+  .select__control {
+    border: var(--pico-border-width) solid var(--pico-form-element-border-color) !important;
+    background-color: var(--pico-form-element-background-color);
+  }
+
+  .select__control--is-focused {
+    border: var(--pico-border-width) solid var(--pico-border-color);
+    box-shadow: 0 0 0 var(--pico-outline-width)
+      var(--pico-form-element-focus-color);
+  }
+
+  .select__value-container {
+    padding: var(--pico-form-element-spacing-vertical)
+      var(--pico-form-element-spacing-horizontal);
+  }
+
+  .select__multi-value {
+    margin: 3px;
+    align-items: center;
+  }
+
+  .select__multi-value__label {
+    padding: 0 calc(var(--pico-spacing) * 0.5);
+  }
+
+  .select__multi-value__remove {
+    border: none;
+    color: var(--pico-secondary-hover);
+    background-color: hsl(0, 0%, 90%);
+    padding: calc(var(--pico-spacing) * 0.5);
+  }
+
+  .select__placeholder {
+    color: var(--pico-form-element-placeholder-color);
+  }
+
+  .select__input {
+    color: var(--pico-color) !important;
+    height: initial;
+  }
+
+  .select__indicator-separator {
+    background-color: var(--pico-muted-border-color);
+  }
+
+  .select__menu {
+    border: var(--pico-border-width) solid var(--pico-form-element-border-color) !important;
+    background-color: var(--pico-form-element-background-color);
+  }
+
+  .select__option {
+    background-color: var(--pico-form-element-background-color);
+  }
+
+  .select__option:hover,
+  .select__option--is-focused {
+    background-color: var(--pico-primary-hover-background);
+    color: var(--pico-background-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .select__multi-value {
+      background-color: var(--pico-secondary-background);
+    }
+
+    .select__multi-value__label {
+      color: var(--pico-secondary-inverse);
+    }
+
+    .select__multi-value__remove {
+      background-color: var(--pico-secondary-background);
+    }
+  }
+}
+
+/************************************************************
+badge
+************************************************************/
+
 .badge {
   background-color: var(--pico-muted-border-color);
   color: var(--pico-muted-color);
@@ -415,7 +499,10 @@ hgroup {
   }
 }
 
-// article title
+/************************************************************
+article title
+************************************************************/
+
 article h3 {
   .badge {
     position: relative;
@@ -427,7 +514,10 @@ article h3 {
   }
 }
 
-// slider
+/************************************************************
+slider
+************************************************************/
+
 input[type="range"] {
   padding-left: 3rem;
 
@@ -444,7 +534,10 @@ input[type="range"] {
   }
 }
 
-// training
+/************************************************************
+training
+************************************************************/
+
 .training {
   p {
     font-size: 1.5em;

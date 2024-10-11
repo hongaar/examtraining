@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import short from "short-uuid";
 import { Functions } from "../../api";
 import { useEditCode, useFunction, useLogEvent } from "../../hooks";
+import { Loading } from "../Loading";
 import {
   Answer as AnswerField,
   Category,
@@ -120,94 +121,106 @@ export function NewQuestionForm({
   return (
     <form onSubmit={addQuestion}>
       <article>
-        <button
-          className="inline outline secondary float-right"
-          type="button"
-          onClick={() => suggestQuestion()}
-          disabled={busy}
-          aria-busy={busy ? "true" : "false"}
-          data-tooltip={
-            busy
-              ? undefined
-              : "Based on the exam description and current questions"
-          }
-        >
-          ✨ Generate question with ChatGPT
-        </button>
-        <h3>Add new question</h3>
-        <fieldset key={suggestion?.time}>
-          <Description
-            defaultValue={suggestion?.question.description}
-            addAnswers={(answers) => {
-              setAnswers((prev) => [
-                ...prev,
-                ...answers.map((answer, index) => ({
-                  id: short.generate(),
-                  order: answers.length + index,
-                  description: answer,
-                  correct: false,
-                })),
-              ]);
-            }}
-          />
-          <div className="answers-inputs">
-            <label>
-              Answers
-              <br />
-              <small>⤵️ Flip switch to mark as the correct answer</small>
-            </label>
-            {answers.map((answer, index) => (
-              <AnswerField
-                key={index}
-                inputRef={index === answers.length - 1 ? lastAnswer : undefined}
-                answer={answer}
-                onChange={(answer) => {
-                  setAnswers(
-                    answers.map((a, i) =>
-                      i === index ? { ...a, description: answer } : a,
-                    ),
-                  );
-                }}
-                onCorrect={() => {
-                  setAnswers(
-                    answers.map((a, i) =>
-                      i === index
-                        ? { ...a, correct: true }
-                        : { ...a, correct: false },
-                    ),
-                  );
-                }}
-                onRemove={() => {
-                  setAnswers(
-                    answers.filter((a) => a.description !== answer.description),
-                  );
-                }}
-                withRemove
-              />
-            ))}
-            <AnswerField
-              onChange={(answer) => {
+        <section className="grid">
+          <h3 style={{ marginBottom: 0 }}>Add new question</h3>
+          <div className="align-right">
+            <button
+              className="inline outline secondary s-full-width"
+              type="button"
+              onClick={() => suggestQuestion()}
+              disabled={busy}
+              aria-busy={busy ? "true" : "false"}
+              data-tooltip={
+                busy
+                  ? undefined
+                  : "Based on the exam description and current questions"
+              }
+            >
+              ✨ Generate question
+            </button>
+          </div>
+        </section>
+        {busy ? (
+          <Loading delay={0}>Loading suggestion...</Loading>
+        ) : (
+          <fieldset key={suggestion?.time}>
+            <Description
+              defaultValue={suggestion?.question.description}
+              addAnswers={(answers) => {
                 setAnswers((prev) => [
                   ...prev,
-                  {
+                  ...answers.map((answer, index) => ({
                     id: short.generate(),
-                    order: answers.length + 1,
+                    order: answers.length + index,
                     description: answer,
                     correct: false,
-                  },
+                  })),
                 ]);
-                setTimeout(() => {
-                  lastAnswer.current?.focus();
-                });
               }}
             />
-          </div>
-          <Explanation defaultValue={suggestion?.question.explanation} />
-          <Category
-            options={categories}
-            defaultValue={suggestion?.question.categories}
-          />
-        </fieldset>
+            <div className="answers-inputs">
+              <label>
+                Answers
+                <br />
+                <small>⤵️ Flip switch to mark as the correct answer</small>
+              </label>
+              {answers.map((answer, index) => (
+                <AnswerField
+                  key={index}
+                  inputRef={
+                    index === answers.length - 1 ? lastAnswer : undefined
+                  }
+                  answer={answer}
+                  onChange={(answer) => {
+                    setAnswers(
+                      answers.map((a, i) =>
+                        i === index ? { ...a, description: answer } : a,
+                      ),
+                    );
+                  }}
+                  onCorrect={() => {
+                    setAnswers(
+                      answers.map((a, i) =>
+                        i === index
+                          ? { ...a, correct: true }
+                          : { ...a, correct: false },
+                      ),
+                    );
+                  }}
+                  onRemove={() => {
+                    setAnswers(
+                      answers.filter(
+                        (a) => a.description !== answer.description,
+                      ),
+                    );
+                  }}
+                  withRemove
+                />
+              ))}
+              <AnswerField
+                onChange={(answer) => {
+                  setAnswers((prev) => [
+                    ...prev,
+                    {
+                      id: short.generate(),
+                      order: answers.length + 1,
+                      description: answer,
+                      correct: false,
+                    },
+                  ]);
+                  setTimeout(() => {
+                    lastAnswer.current?.focus();
+                  });
+                }}
+              />
+            </div>
+            <Explanation defaultValue={suggestion?.question.explanation} />
+            <Category
+              options={categories}
+              defaultValue={suggestion?.question.categories}
+            />
+          </fieldset>
+        )}
         <footer>
           <fieldset className="grid">
             <button

@@ -338,7 +338,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
               <input
                 type="submit"
                 className="secondary outline"
-                value="✨ Generate question on this subject"
+                value="✨ Generate question on subject"
               />
             </fieldset>
           </form>

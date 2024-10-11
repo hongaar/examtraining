@@ -51,8 +51,11 @@ async function generateSuggestion({
   subject?: string;
 }) {
   const openai = getOpenAIClient();
-  const system =
-    "You are a teacher creating questions for an exam. You are given a set of example questions and optionally a subject to help you create a new question. The explanation field should contain context to better understand the correct answer.";
+  const system = `You are a teacher creating questions for an exam. You are \
+given a set of example questions and optionally a subject to help you create a \
+new question. If no subject is provided, infer it from the example questions. \
+The explanation field should contain context to better understand the correct \
+answer.`;
   const user = `Exam title: ${exam.title}
 
 Exam description: ${exam.description ? exam.description : "No description"}
@@ -70,6 +73,7 @@ ${JSON.stringify(question, null, 2)}
         )
         .join("\n\n")
 }${subject ? `\n\nSubject: ${subject}` : ""}`;
+
   const chatCompletion = await openai.beta.chat.completions.parse({
     messages: [
       {
@@ -124,7 +128,8 @@ ${JSON.stringify(question, null, 2)}
       },
     },
     ...getDefaultCompletionsParams(),
-    temperature: 0.3,
+    temperature: 0.8,
+    top_p: 0.8,
   });
 
   const result = chatCompletion.choices[0]?.message;

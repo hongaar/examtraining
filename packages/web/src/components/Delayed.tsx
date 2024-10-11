@@ -8,7 +8,7 @@ type Props = {
 export function Delayed({ children, delay = 500 }: Props) {
   console.debug("Rendering component Delayed");
 
-  const [isShown, setIsShown] = useState(false);
+  const [isShown, setIsShown] = useState(delay === 0 ? true : false);
 
   useEffect(() => {
     const timer = setTimeout(() => {

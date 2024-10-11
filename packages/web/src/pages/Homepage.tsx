@@ -60,7 +60,7 @@ export function Homepage() {
               <h3>Get help from AI.</h3>
               <p>
                 Create new questions and answers with the power of ChatGPT.
-                Students can use AI for question explanation.
+                Students can use AI to explain answers.
               </p>
               <Link role="button" href="/new">
                 ✨ Get started
@@ -80,14 +80,14 @@ export function Homepage() {
                   <h4>
                     🔁 <u>Learn from mistakes</u>
                   </h4>
-                  Repeat questions you answered incorrectly until you get them
-                  right.
+                  Repeat questions until you get them. Explain questions with
+                  the help of AI.
                 </div>
                 <div>
                   <h4>
                     ✅ <u>Pass threshold</u>
                   </h4>
-                  Provides training feedback on whether you would have passed
+                  Provides immediate feedback on whether you would have passed
                   the exam.
                 </div>
               </div>
@@ -112,8 +112,8 @@ export function Homepage() {
                   <h4>
                     🪬 <u>Privacy friendly</u>
                   </h4>
-                  We don't store any students personal data. Training results
-                  are not stored on our servers.
+                  No need to sign up. We don't store any personal data other
+                  than an email address.
                 </div>
                 <div>
                   <h4>
