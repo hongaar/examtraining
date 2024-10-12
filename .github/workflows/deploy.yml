@@ -23,6 +23,8 @@ jobs:
       - run: firebase login:list
       - run: firebase deploy --only hosting
       - run: firebase deploy --only functions
+      - run: firebase deploy --only firestore
+      - run: firebase deploy --only extensions
       # For now, manually set the function to Allow unauthenticated invocations
       # - run: |
       #     gcloud run services add-iam-policy-binding [SERVICE_NAME] \
