@@ -4,7 +4,16 @@ import { useLocalStorage } from "usehooks-ts";
 import { useLocation } from "wouter";
 import { Functions, progress } from "../../api";
 import { useEditCode, useFunction, useLogEvent } from "../../hooks";
-import { Description, Email, Private, Threshold, Title, Url } from "./Fields";
+import {
+  AI,
+  Description,
+  Email,
+  ExplanationPrompt,
+  Private,
+  Threshold,
+  Title,
+  Url,
+} from "./Fields";
 
 type Props = {
   exam: ExamWithQuestions;
@@ -24,6 +33,7 @@ export function CopyExamForm({ exam }: Props) {
   const copyExam = useFunction(Functions.CopyExam);
   const [saving, setSaving] = useState(false);
   const logEvent = useLogEvent();
+  const [AIEnabled, setAIEnabled] = useState(exam.enableAI);
 
   const copy = useCallback(
     async function (event: FormEvent<HTMLFormElement>) {
@@ -47,6 +57,8 @@ export function CopyExamForm({ exam }: Props) {
                 description: data.get("description") as string,
                 threshold: Number(data.get("threshold")),
                 private: data.get("private") === "on",
+                enableAI: data.get("enableAI") === "on",
+                explanationPrompt: data.get("explanationPrompt") as string,
               },
               owner: data.get("email") as string,
             }),
@@ -139,6 +151,16 @@ export function CopyExamForm({ exam }: Props) {
           />
           <Threshold defaultValue={exam.threshold} />
           <Private defaultChecked={exam.private} />
+          <AI
+            defaultChecked={exam.enableAI}
+            onChange={(event) => {
+              setAIEnabled(event.target.checked);
+            }}
+          />
+          <ExplanationPrompt
+            className={AIEnabled ? undefined : "hidden"}
+            defaultValue={exam.explanationPrompt}
+          />
         </fieldset>
         <footer>
           <fieldset className="grid">

@@ -62,7 +62,7 @@ export const createExamQuestion = onCall<
       description: data.data.description,
       explanation: data.data.explanation,
       answers: data.data.answers,
-      categories: data.data.categories,
+      categories: data.data.categories || [],
     } as Question);
 
     logger.info({ message: "created exam question", data });
