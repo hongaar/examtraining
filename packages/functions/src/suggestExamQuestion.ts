@@ -11,7 +11,6 @@ import {
   AddIdAndRef,
   Exam,
   FirestoreCollection,
-  PlainDoc,
   Question,
   shuffle,
 } from "@examtraining/core";
@@ -30,6 +29,7 @@ type SuggestExamQuestionParams = {
   editCode: string;
   questionId?: string;
   subject?: string;
+  history?: string[];
 };
 
 type SuggestExamQuestionReturn = {
@@ -43,24 +43,62 @@ type SuggestExamQuestionReturn = {
 
 async function generateSuggestion({
   exam,
-  exampleQuestions,
+  questions,
+  similarQuestion,
   subject,
+  history = [],
 }: {
   exam: Exam;
-  exampleQuestions: Question[];
+  questions: AddIdAndRef<Question>[];
+  similarQuestion?: Question;
   subject?: string;
+  history?: string[];
 }) {
   const openai = getOpenAIClient();
-  const system = `You are a teacher creating questions for an exam. You are \
-given a set of example questions and optionally a subject to help you create a \
-new question. If no subject is provided, infer it from the example questions. \
-The explanation field should contain context to better understand the correct \
-answer.`;
-  const user = `Exam title: ${exam.title}
 
-Exam description: ${exam.description ? exam.description : "No description"}
+  // Take random questions
+  const nExamples = 2;
+  const exampleQuestions = shuffle(questions)
+    .slice(0, nExamples)
+    .map(toPlainObject);
+
+  const system = `You are a teacher creating a new question for an exam.
+
+# Context
+
+You are given an exam title and description, please use this information as \
+context about the language, style and difficulty of the new question.
   
-Example questions:
+You are given a few examples of the question and answers format, please return \
+a new question using this template.
+
+The explanation field should contain context to better understand the correct \
+answer.
+
+# Avoid duplicates
+
+You're always given a list of all existing questions. The new question must \
+not be a duplicate of or similar to any of these questions.
+
+# Subject of new question
+
+You're sometimes provided with a subject. If it is provided, the new question \
+must cover this subject.
+
+You're sometimes provided with similar question. If it is provided, the new \
+question must cover the same subject as this question.
+
+If both the subject and similar question are not provided, infer the subject \
+from the exam title and description and the list of all existing questions.`;
+  const user = `# Exam title
+  
+${exam.title}
+
+# Exam description
+
+${exam.description ? exam.description : "No description"}
+  
+# Examples question and answers format
 
 ${
   exampleQuestions.length === 0
@@ -72,7 +110,26 @@ ${JSON.stringify(question, null, 2)}
 \`\`\``,
         )
         .join("\n\n")
-}${subject ? `\n\nSubject: ${subject}` : ""}`;
+}
+
+# List of all existing questions
+
+${
+  questions.length + history.length === 0
+    ? "No existing questions"
+    : [...questions.map((q) => q.description), ...history]
+        .map((d) => `- ${d}`)
+        .join("\n")
+}
+
+# Subject
+
+${subject || "No subject provided"}
+
+# Similar question
+
+${similarQuestion ? similarQuestion.description : "No similar question provided"}
+`;
 
   const chatCompletion = await openai.beta.chat.completions.parse({
     messages: [
@@ -147,16 +204,17 @@ export const suggestExamQuestion = onCall<
 >(
   { region: "europe-west1", cors: "*", secrets: [openAIApiKey] },
   async ({ data }) => {
-    if (!data.slug) {
+    const { slug, editCode, questionId, subject, history } = data;
+    if (!slug) {
       throw new HttpsError("invalid-argument", "slug not specified.");
     }
 
-    if (!data.editCode) {
+    if (!editCode) {
       throw new HttpsError("invalid-argument", "editCode not specified.");
     }
 
     try {
-      const exam = await getDocument(FirestoreCollection.Exams, data.slug);
+      const exam = await getDocument(FirestoreCollection.Exams, slug);
 
       // Check for document existence
       if (!exam) {
@@ -170,42 +228,41 @@ export const suggestExamQuestion = onCall<
       }
 
       // Verify edit code
-      if (secrets.data()!.editCode !== data.editCode) {
+      if (secrets.data()!.editCode !== editCode) {
         throw new HttpsError(
           "permission-denied",
           "The edit code provided is incorrect.",
         );
       }
 
-      let exampleQuestions: PlainDoc<AddIdAndRef<Question>>[] = [];
+      const questions = await getCollection(
+        FirestoreCollection.Exams,
+        slug,
+        FirestoreCollection.Questions,
+      );
 
-      if (data.questionId) {
+      let similarQuestion;
+
+      if (questionId) {
         let question = await collectionRef(
           FirestoreCollection.Exams,
-          data.slug,
+          slug,
           FirestoreCollection.Questions,
         )
-          .doc(data.questionId)
+          .doc(questionId)
           .get();
 
-        exampleQuestions = [
-          toPlainObject(question.data() as AddIdAndRef<Question>),
-        ];
-      } else {
-        const allQuestions = await getCollection(
-          FirestoreCollection.Exams,
-          data.slug,
-          FirestoreCollection.Questions,
+        similarQuestion = toPlainObject(
+          question.data() as AddIdAndRef<Question>,
         );
-
-        // Take 5 random questions
-        exampleQuestions = shuffle(allQuestions).slice(0, 5).map(toPlainObject);
       }
 
       const question = await generateSuggestion({
         exam,
-        exampleQuestions,
-        subject: data.subject,
+        questions,
+        similarQuestion,
+        subject,
+        history,
       });
 
       logger.info({ message: "suggested exam question", data });

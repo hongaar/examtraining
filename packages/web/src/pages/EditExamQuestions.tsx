@@ -238,12 +238,16 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
           />
         ) : (
           <NewQuestionForm
-            slug={slug}
+            exam={exam}
             categories={categories}
             onSubmit={onNewQuestion}
             disabled={saving}
             suggestBasedOnQuestion={suggestBasedOnQuestion}
             suggestBasedOnSubject={suggestBasedOnSubject}
+            resetSuggestions={() => {
+              setSuggestBasedOnQuestion(null);
+              setSuggestBasedOnSubject(null);
+            }}
           />
         )}
         <article>

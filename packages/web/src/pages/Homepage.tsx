@@ -34,7 +34,11 @@ export function Homepage() {
                       type="text"
                       name="slug"
                       required
-                      defaultValue={recentExams[0]?.title}
+                      defaultValue={
+                        typeof recentExams[0] === "object"
+                          ? undefined
+                          : recentExams[0]
+                      }
                       placeholder="Exam code"
                     />
                     <button type="submit">🧠 Train now</button>

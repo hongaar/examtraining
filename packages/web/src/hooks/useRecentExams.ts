@@ -5,7 +5,7 @@ import { useLocalStorage } from "usehooks-ts";
 const MAX_RECENT_EXAMS = 5;
 
 export function useRecentExams() {
-  const [recentExams, setRecentExams] = useLocalStorage<ExamWithQuestions[]>(
+  const [recentExams, setRecentExams] = useLocalStorage<string[]>(
     "recentExams",
     [],
   );
@@ -13,8 +13,8 @@ export function useRecentExams() {
   const addRecentExam = useCallback(
     (exam: ExamWithQuestions) => {
       const newRecentExams = [
-        exam,
-        ...recentExams.filter((recentExam) => recentExam.id !== exam.id),
+        exam.id,
+        ...recentExams.filter((recentExam) => recentExam !== exam.id),
       ];
 
       if (newRecentExams.length > MAX_RECENT_EXAMS) {
