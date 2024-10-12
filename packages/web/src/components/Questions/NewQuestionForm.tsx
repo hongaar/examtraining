@@ -289,12 +289,25 @@ export function NewQuestionForm({
         )}
         <footer>
           <fieldset className="grid">
+            {suggestBasedOnQuestion || suggestBasedOnSubject ? (
+              <button
+                disabled={disabled || busy}
+                className="secondary"
+                type="button"
+                onClick={() => resetSuggestions()}
+              >
+                Stop auto-generating
+              </button>
+            ) : null}
             <button
               disabled={disabled || busy}
               aria-busy={disabled ? "true" : "false"}
               type="submit"
             >
               💾 Create question
+              {suggestBasedOnQuestion || suggestBasedOnSubject
+                ? " and generate another"
+                : ""}
             </button>
           </fieldset>
         </footer>

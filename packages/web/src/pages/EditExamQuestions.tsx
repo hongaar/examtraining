@@ -95,8 +95,6 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
         return;
       }
 
-      setSuggestBasedOnQuestion(null);
-      setSuggestBasedOnSubject(null);
       setSaving(true);
       try {
         await progress(
@@ -312,7 +310,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
                   }}
                   data-tooltip="Generate a question based on this question"
                 >
-                  ✨ Generate similar question
+                  ✨ Generate similar questions
                 </button>
               </details>
               {i !== exam.questions.length - 1 ? <hr /> : null}
@@ -342,7 +340,7 @@ export function EditExamQuestions({ params }: { params: { exam: string } }) {
               <input
                 type="submit"
                 className="secondary outline"
-                value="✨ Generate question on subject"
+                value="✨ Generate questions on subject"
               />
             </fieldset>
           </form>
