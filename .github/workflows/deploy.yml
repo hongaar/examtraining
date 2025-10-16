@@ -15,9 +15,9 @@ jobs:
           cache: yarn
       - uses: w9jds/setup-firebase@main
         with:
-          tools-version: 11.9.0
-          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
-          # gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXAMTRAINING_C20CD }}
+          # tools-version: 11.9.0
+          # firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+          gcp_sa_key: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXAMTRAINING_C20CD }}
       - run: yarn
       - run: yarn build
       - run: yarn pack-core
