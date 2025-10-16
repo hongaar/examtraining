@@ -59,6 +59,13 @@ function parseRaw(minOrder: number, text: string) {
       continue;
     }
 
+    // Check for explanation line
+    const explanationMatch = lines[i].match(/^Explanation:\s*(.+)$/i);
+    if (explanationMatch && questions[currentQuestionIndex]) {
+      questions[currentQuestionIndex].explanation = explanationMatch[1].trim();
+      continue;
+    }
+
     if (currentQuestionIndex !== -1 && currentAnswerIndex === -1) {
       questions[currentQuestionIndex].description += "\n" + lines[i];
     } else if (currentQuestionIndex !== -1 && currentAnswerIndex !== -1) {
@@ -163,7 +170,8 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
             Paste raw exam questions and answers here. Each question should be
             on a new line and start with a number. Each answer should be on a
             new line and start with a dash (-), dot (•) or a letter. The correct
-            answer may be marked with an asterisk (*) instead.
+            answer may be marked with an asterisk (*) instead. Explanations may
+            be provided after all answers and start with "Explanation: ".
           </small>
         </label>
         <article>
@@ -261,6 +269,11 @@ export function BulkAddExamQuestions({ params }: { params: { exam: string } }) {
                         </li>
                       ))}
                     </ul>
+                    {question.explanation && (
+                      <p>
+                        <em>Explanation: {nl2br(question.explanation)}</em>
+                      </p>
+                    )}
                   </fieldset>
                 </details>
                 {i !== newQuestions.length - 1 ? <hr /> : null}
