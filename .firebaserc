@@ -2,12 +2,5 @@
   "projects": {
     "default": "examtraining-c20cd"
   },
-  "targets": {},
-  "etags": {
-    "examtraining-c20cd": {
-      "extensionInstances": {
-        "firestore-send-email": "99971af5c102faae84c184ba40344189498b8b5058ffaf36bfc7644584c463ca"
-      }
-    }
-  }
+  "targets": {}
 }
