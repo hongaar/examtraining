@@ -11,7 +11,7 @@ export const openAIApiKey: SecretParam = defineSecret("OPENAI_API_KEY");
 let client: OpenAI;
 
 const OPENAI_MAX_RETRIES = 2;
-const OPENAI_TIMEOUT = 20000; // 20 seconds
+const OPENAI_TIMEOUT = 30000; // 20 seconds
 const CHATGPT_MODEL: OpenAI.ChatModel = "gpt-4o-mini";
 const CHATGPT_TEMPERATURE: number = 0.1; // 0 - 2
 const CHATGPT_TOP_P: number = 0.1; // 0 - 1
